@@ -55,18 +55,27 @@ export async function POST(req: Request) {
     const { id, email_addresses, username, first_name, last_name, image_url } = evt.data;
 
     try {
-      // Create user in database
-      await prisma.user.create({
+      // Create user and organization in database
+      const user = await prisma.user.create({
         data: {
           clerkId: id,
           email: email_addresses[0].email_address,
           username: username || null,
           name: `${first_name || ""} ${last_name || ""}`.trim() || null,
           imageUrl: image_url,
+          organization: {
+            create: {
+              name: `${first_name || username || "User"}'s Organization`,
+              slug: `${username || id}-org`.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+            },
+          },
+        },
+        include: {
+          organization: true,
         },
       });
 
-      console.log(`User created: ${id}`);
+      console.log(`User and organization created: ${id}, org: ${user.organization?.id}`);
     } catch (error) {
       console.error("Error creating user:", error);
       return new Response("Error occured", { status: 500 });

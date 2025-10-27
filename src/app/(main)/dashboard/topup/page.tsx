@@ -85,7 +85,9 @@ export default function TopupPage() {
         const { url } = await response.json();
         window.location.href = url;
       } else {
-        console.error('Failed to create checkout session');
+        const errorData = await response.json();
+        console.error('Failed to create checkout session:', errorData);
+        alert(`Error: ${errorData.error || 'Failed to create checkout session'}`);
         setIsProcessing(false);
         setSelectedPackage(null);
       }
