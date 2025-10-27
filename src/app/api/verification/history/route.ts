@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
       stats: {
         totalVerifications: stats._count.id,
         totalCreditsUsed: stats._sum.creditsUsed || 0,
-        resultBreakdown: resultStats.reduce((acc, item) => {
+        resultBreakdown: resultStats.reduce((acc: Record<string, number>, item: { result: string; _count: { id: number } }) => {
           acc[item.result] = item._count.id;
           return acc;
         }, {} as Record<string, number>)

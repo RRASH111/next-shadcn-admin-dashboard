@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         where: { userId: newUser.id },
         select: { amount: true }
       });
-      const totalCredits = creditTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+      const totalCredits = creditTransactions.reduce((sum: number, transaction: { amount: number }) => sum + transaction.amount, 0);
       
       if (totalCredits < 1) {
         return NextResponse.json(
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       where: { userId: user.id },
       select: { amount: true }
     });
-    const totalCredits = creditTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+    const totalCredits = creditTransactions.reduce((sum: number, transaction: { amount: number }) => sum + transaction.amount, 0);
     
     if (totalCredits < 1) {
       return NextResponse.json(

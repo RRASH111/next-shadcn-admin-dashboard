@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       select: { amount: true }
     });
 
-    const totalCredits = creditTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+    const totalCredits = creditTransactions.reduce((sum: number, transaction: { amount: number }) => sum + transaction.amount, 0);
 
     return NextResponse.json({
       credits: Math.max(0, totalCredits) // Ensure credits never go negative
