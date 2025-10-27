@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
@@ -23,18 +24,20 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const themePreset = await getPreference<ThemePreset>("theme_preset", THEME_PRESET_VALUES, "default");
 
   return (
-    <html
-      lang="en"
-      className={themeMode === "dark" ? "dark" : ""}
-      data-theme-preset={themePreset}
-      suppressHydrationWarning
-    >
-      <body className={`${inter.className} min-h-screen antialiased`}>
-        <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
-          {children}
-          <Toaster />
-        </PreferencesStoreProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html
+        lang="en"
+        className={themeMode === "dark" ? "dark" : ""}
+        data-theme-preset={themePreset}
+        suppressHydrationWarning
+      >
+        <body className={`${inter.className} h-screen antialiased`}>
+          <PreferencesStoreProvider themeMode={themeMode} themePreset={themePreset}>
+            {children}
+            <Toaster />
+          </PreferencesStoreProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

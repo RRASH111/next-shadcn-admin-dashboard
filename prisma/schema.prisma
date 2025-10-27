@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String                 @id @default(cuid())
+  clerkId               String                 @unique
+  email                 String                 @unique
+  username              String?
+  name                  String?
+  imageUrl              String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  memberships           Membership[]
+  organization          Organization?          @relation("OrganizationOwner")
+  subscriptions         Subscription[]
+  verificationHistory   VerificationHistory[]
+  bulkJobs              BulkJob[]
+  creditTransactions    CreditTransaction[]
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+model Organization {
+  id                       String         @id @default(cuid())
+  name                     String
+  slug                     String         @unique
+  ownerId                  String         @unique
+  stripeCustomerId         String?        @unique
+  stripePriceId            String?
+  stripeSubscriptionId     String?        @unique
+  stripeSubscriptionStatus String?
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
+  members                  Membership[]
+  owner                    User           @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  subscriptions            Subscription[]
+
+  @@index([slug])
+  @@index([stripeCustomerId])
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  role           String       @default("member")
+  userId         String
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@index([userId])
+  @@index([organizationId])
+}
+
+model Subscription {
+  id                       String       @id @default(cuid())
+  stripeSubscriptionId     String       @unique
+  stripeCustomerId         String
+  stripePriceId            String
+  stripeStatus             String
+  stripeCurrentPeriodStart DateTime?
+  stripeCurrentPeriodEnd   DateTime?
+  stripeCancelAt           DateTime?
+  userId                   String
+  organizationId           String
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+  organization             Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user                     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([stripeSubscriptionId])
+}
+
+model VerificationHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  email         String
+  result        String   // ok, catch_all, unknown, error, disposable, invalid
+  resultcode    Int      // 1-6
+  quality       String?  // good, bad, risky
+  subresult     String?
+  free          Boolean  @default(false)
+  role          Boolean  @default(false)
+  didyoumean    String?
+  creditsUsed   Int      @default(1)
+  executionTime Int?
+  error         String?
+  livemode      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([email])
+  @@index([createdAt])
+}
+
+model BulkJob {
+  id              String   @id @default(cuid())
+  userId          String
+  fileId          String   // MillionVerifier file ID
+  fileName        String
+  status          String   // in_progress, finished, error, canceled, paused, in_queue_to_start
+  totalRows       Int      @default(0)
+  uniqueEmails    Int      @default(0)
+  verified        Int      @default(0)
+  percent         Int      @default(0)
+  okCount         Int      @default(0)
+  catchAllCount   Int      @default(0)
+  disposableCount Int      @default(0)
+  invalidCount    Int      @default(0)
+  unknownCount    Int      @default(0)
+  reverifyCount   Int      @default(0)
+  credit          Int      @default(0)
+  estimatedTimeSec Int?
+  errorMessage    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([fileId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CreditTransaction {
+  id                    String   @id @default(cuid())
+  userId                String
+  amount                Int      // Positive for purchases, negative for usage
+  type                  String   // purchase, verification, bulk_verification
+  description           String?
+  stripePaymentIntentId String?
+  millionverifierFileId String?  // For bulk verification transactions
+  createdAt             DateTime @default(now())
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
