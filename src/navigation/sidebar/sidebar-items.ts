@@ -41,14 +41,14 @@ export const sidebarItems: NavGroup[] = [
         icon: Clock,
       },
       {
-        title: "Verification History",
-        url: "/dashboard/verification-history",
-        icon: History,
-      },
-      {
         title: "Bulk Jobs",
         url: "/dashboard/bulk-jobs",
         icon: FileText,
+      },
+      {
+        title: "Verification History",
+        url: "/dashboard/verification-history",
+        icon: History,
       },
     ],
   },
