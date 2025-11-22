@@ -47,62 +47,95 @@ export async function POST(req: Request) {
       console.log("Session metadata:", session.metadata);
 
       if (session.mode === "subscription" && session.metadata) {
-        // Handle monthly subscription creation
-        const { userId, organizationId, packageId, credits } = session.metadata;
-        console.log("Subscription details:", { userId, organizationId, packageId, credits });
+        // For subscriptions, credits will be added via invoice.payment_succeeded event
+        console.log("✅ Subscription checkout completed, waiting for invoice payment");
+      } else if (session.mode === "payment" && session.metadata) {
+        // Handle one-time payment
+        const { userId, credits } = session.metadata;
+        console.log("One-time payment details:", { userId, credits });
 
-        if (userId && organizationId && credits) {
+        if (userId && credits) {
           try {
-            // Add initial credits for the subscription
+            // Add credits for one-time purchase
             const creditTransaction = await prisma.creditTransaction.create({
               data: {
                 userId: userId,
                 amount: parseInt(credits),
-                type: "subscription",
-                description: `Monthly subscription - ${credits} credits`,
+                type: "purchase",
+                description: `One-time purchase - ${credits} credits`,
                 stripePaymentIntentId: (session as any).payment_intent as string,
               },
             });
 
-            console.log(`✅ Added ${credits} credits to user ${userId} for monthly subscription`);
+            console.log(`✅ Added ${credits} credits to user ${userId} for one-time purchase`);
             console.log("Credit transaction ID:", creditTransaction.id);
           } catch (error) {
             console.error("❌ Failed to create credit transaction:", error);
           }
         } else {
-          console.log("❌ Missing required metadata for subscription");
+          console.log("❌ Missing required metadata for one-time payment");
         }
-      } else {
-        console.log("❌ Not a subscription checkout or missing metadata");
       }
       break;
 
     case "invoice.payment_succeeded":
       const invoice = event.data.object as Stripe.Invoice;
+      console.log("💰 Invoice payment succeeded");
+      console.log("Invoice subscription:", (invoice as any).subscription);
 
       // Check if this invoice is for a subscription
       const subscriptionId = (invoice as any).subscription;
       if (subscriptionId && typeof subscriptionId === "string") {
-        // Handle monthly subscription renewal
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const organization = await prisma.organization.findFirst({
-          where: { stripeSubscriptionId: subscription.id },
-          include: { owner: true },
-        });
+        try {
+          // Get subscription details
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          console.log("Subscription metadata:", subscription.metadata);
 
-        if (organization && subscription.metadata?.credits) {
-          // Add monthly credits
-          await prisma.creditTransaction.create({
-            data: {
-              userId: organization.ownerId,
-              amount: parseInt(subscription.metadata.credits),
-              type: "subscription_renewal",
-              description: `Monthly renewal - ${subscription.metadata.credits} credits`,
-              stripePaymentIntentId: (invoice as any).payment_intent as string,
-            },
-          });
+          if (subscription.metadata?.userId && subscription.metadata?.credits) {
+            const userId = subscription.metadata.userId;
+            const credits = parseInt(subscription.metadata.credits);
 
-          console.log(`Added ${subscription.metadata.credits} credits for monthly renewal`);
+            // Check if this is the first invoice (billing_reason = 'subscription_create')
+            const billingReason = (invoice as any).billing_reason;
+            console.log("Billing reason:", billingReason);
+
+            // Determine transaction type based on billing reason
+            const transactionType = billingReason === "subscription_create" ? "subscription" : "subscription_renewal";
+            const description =
+              billingReason === "subscription_create"
+                ? `Monthly subscription - ${credits} credits`
+                : `Monthly renewal - ${credits} credits`;
+
+            // Check if we already added credits for this invoice to avoid duplicates
+            const existingTransaction = await prisma.creditTransaction.findFirst({
+              where: {
+                userId: userId,
+                stripePaymentIntentId: (invoice as any).payment_intent as string,
+              },
+            });
+
+            if (!existingTransaction) {
+              // Add credits
+              const creditTransaction = await prisma.creditTransaction.create({
+                data: {
+                  userId: userId,
+                  amount: credits,
+                  type: transactionType,
+                  description: description,
+                  stripePaymentIntentId: (invoice as any).payment_intent as string,
+                },
+              });
+
+              console.log(`✅ Added ${credits} credits to user ${userId} for ${transactionType}`);
+              console.log("Credit transaction ID:", creditTransaction.id);
+            } else {
+              console.log("⚠️ Credits already added for this payment intent, skipping");
+            }
+          } else {
+            console.log("❌ Missing userId or credits in subscription metadata");
+          }
+        } catch (error) {
+          console.error("❌ Failed to process invoice payment:", error);
         }
       }
       break;

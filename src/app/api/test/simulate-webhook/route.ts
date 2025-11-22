@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // Test endpoint to simulate Stripe webhook events (for development only)
 export async function POST(request: Request) {
   try {
-    const { eventType, userId, organizationId, packageId, credits } = await request.json();
+    const { eventType, userId, organizationId, packageId, credits, subscriptionId } = await request.json();
 
     if (!eventType) {
       return NextResponse.json({ error: "eventType is required" }, { status: 400 });
@@ -11,22 +11,57 @@ export async function POST(request: Request) {
 
     console.log(`🧪 Test: Simulating Stripe webhook event: ${eventType}`);
 
-    // Create a mock Stripe event
-    const mockEvent = {
-      type: eventType,
-      data: {
-        object: {
-          mode: "subscription",
-          metadata: {
-            userId: userId || "test-user-id",
-            organizationId: organizationId || "test-org-id",
-            packageId: packageId || "10k",
-            credits: credits || "10000",
+    let mockEvent: any;
+
+    // Create different mock events based on event type
+    if (eventType === "invoice.payment_succeeded") {
+      // Simulate invoice payment succeeded event (this is what adds credits)
+      mockEvent = {
+        type: eventType,
+        data: {
+          object: {
+            subscription: subscriptionId || "sub_test_" + Date.now(),
+            payment_intent: "pi_test_" + Date.now(),
+            billing_reason: "subscription_create", // or 'subscription_cycle' for renewals
+            customer: "cus_test_" + Date.now(),
           },
-          payment_intent: "pi_test_" + Date.now(),
         },
-      },
-    };
+      };
+    } else if (eventType === "checkout.session.completed") {
+      // Simulate checkout session completed
+      mockEvent = {
+        type: eventType,
+        data: {
+          object: {
+            mode: "subscription",
+            metadata: {
+              userId: userId || "test-user-id",
+              organizationId: organizationId || "test-org-id",
+              packageId: packageId || "10k",
+              credits: credits || "10000",
+            },
+            payment_intent: "pi_test_" + Date.now(),
+          },
+        },
+      };
+    } else {
+      // Default mock event structure
+      mockEvent = {
+        type: eventType,
+        data: {
+          object: {
+            mode: "subscription",
+            metadata: {
+              userId: userId || "test-user-id",
+              organizationId: organizationId || "test-org-id",
+              packageId: packageId || "10k",
+              credits: credits || "10000",
+            },
+            payment_intent: "pi_test_" + Date.now(),
+          },
+        },
+      };
+    }
 
     // Forward to the actual webhook handler
     const webhookResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/stripe`, {

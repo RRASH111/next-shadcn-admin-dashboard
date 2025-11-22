@@ -23,10 +23,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 interface Subscription {
   id: string;
   status: string;
-  currentPeriodStart: string;
-  currentPeriodEnd: string;
-  priceId: string;
-  cancelAt?: string;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  priceId: string | null;
+  cancelAt?: string | null;
 }
 
 interface PaymentMethod {
@@ -49,11 +49,22 @@ interface Invoice {
   invoicePdf?: string;
 }
 
+interface CreditStats {
+  currentBalance: number;
+  totalCreditsAdded: number;
+  totalCreditsUsed: number;
+}
+
 export default function BillingPage() {
   const { user } = useUser();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [creditStats, setCreditStats] = useState<CreditStats>({
+    currentBalance: 0,
+    totalCreditsAdded: 0,
+    totalCreditsUsed: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [portalLoading, setPortalLoading] = useState(false);
 
@@ -63,11 +74,12 @@ export default function BillingPage() {
 
   const fetchBillingData = async () => {
     try {
-      // Fetch subscription, payment methods, and invoices
-      const [subscriptionRes, paymentMethodsRes, invoicesRes] = await Promise.all([
+      // Fetch subscription, payment methods, invoices, and credit stats
+      const [subscriptionRes, paymentMethodsRes, invoicesRes, creditStatsRes] = await Promise.all([
         fetch("/api/billing/subscription"),
         fetch("/api/billing/payment-methods"),
         fetch("/api/billing/invoices"),
+        fetch("/api/credits/stats"),
       ]);
 
       if (subscriptionRes.ok) {
@@ -83,6 +95,15 @@ export default function BillingPage() {
       if (invoicesRes.ok) {
         const invData = await invoicesRes.json();
         setInvoices(invData);
+      }
+
+      if (creditStatsRes.ok) {
+        const statsData = await creditStatsRes.json();
+        setCreditStats({
+          currentBalance: statsData.currentBalance || 0,
+          totalCreditsAdded: statsData.totalCreditsAdded || 0,
+          totalCreditsUsed: statsData.totalCreditsUsed || 0,
+        });
       }
     } catch (error) {
       console.error("Error fetching billing data:", error);
@@ -149,12 +170,17 @@ export default function BillingPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return "N/A";
+    }
   };
 
   const formatCurrency = (amount: number, currency: string) => {
@@ -325,16 +351,16 @@ export default function BillingPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
-              <div className="text-2xl font-bold">4,999</div>
+              <div className="text-2xl font-bold">{creditStats.currentBalance.toLocaleString()}</div>
               <div className="text-muted-foreground text-sm">Credits Remaining</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold">1</div>
+              <div className="text-2xl font-bold">{creditStats.totalCreditsUsed.toLocaleString()}</div>
               <div className="text-muted-foreground text-sm">Credits Used</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold">5,000</div>
-              <div className="text-muted-foreground text-sm">Total Credits</div>
+              <div className="text-2xl font-bold">{creditStats.totalCreditsAdded.toLocaleString()}</div>
+              <div className="text-muted-foreground text-sm">Total Credits Added</div>
             </div>
           </div>
           <Separator className="my-4" />

@@ -35,13 +35,23 @@ export async function GET() {
       return NextResponse.json({ subscription: null });
     }
 
+    // Helper function to safely convert Unix timestamp to ISO string
+    const toISOString = (timestamp: number | null | undefined): string | null => {
+      if (!timestamp || timestamp === 0) return null;
+      try {
+        return new Date(timestamp * 1000).toISOString();
+      } catch {
+        return null;
+      }
+    };
+
     return NextResponse.json({
       id: subscription.id,
       status: subscription.status,
-      currentPeriodStart: new Date((subscription as any).current_period_start * 1000).toISOString(),
-      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000).toISOString(),
-      priceId: subscription.items.data[0].price.id,
-      cancelAt: (subscription as any).cancel_at ? new Date((subscription as any).cancel_at * 1000).toISOString() : null,
+      currentPeriodStart: toISOString((subscription as any).current_period_start),
+      currentPeriodEnd: toISOString((subscription as any).current_period_end),
+      priceId: subscription.items.data[0]?.price?.id || null,
+      cancelAt: toISOString((subscription as any).cancel_at),
     });
   } catch (error) {
     console.error("Error fetching subscription:", error);
