@@ -49,9 +49,7 @@ export function NavUser() {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.fullName || "User"}</span>
-                <span className="text-muted-foreground truncate text-xs">
-                  {user.emailAddresses[0]?.emailAddress}
-                </span>
+                <span className="text-muted-foreground truncate text-xs">{user.emailAddresses[0]?.emailAddress}</span>
               </div>
               <EllipsisVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -72,9 +70,7 @@ export function NavUser() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.fullName || "User"}</span>
-                  <span className="text-muted-foreground truncate text-xs">
-                    {user.emailAddresses[0]?.emailAddress}
-                  </span>
+                  <span className="text-muted-foreground truncate text-xs">{user.emailAddresses[0]?.emailAddress}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

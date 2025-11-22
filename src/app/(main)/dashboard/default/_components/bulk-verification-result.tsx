@@ -17,7 +17,7 @@ interface BulkVerificationResultProps {
   badEmails: number;
   totalEmails: number;
   onDelete: () => void;
-  onDownload: (filter: 'all' | 'ok' | 'ok_and_catch_all' | 'invalid' | 'disposable' | 'unknown') => void;
+  onDownload: (filter: "all" | "ok" | "ok_and_catch_all" | "invalid" | "disposable" | "unknown") => void;
 }
 
 export function BulkVerificationResult({
@@ -36,17 +36,9 @@ export function BulkVerificationResult({
   const badPercentage = totalEmails > 0 ? Math.round((badEmails / totalEmails) * 100) : 0;
 
   const GoodProgress = () => (
-    <div className="relative inline-flex items-center justify-center w-16 h-16">
-      <svg className="transform -rotate-90 w-16 h-16">
-        <circle
-          cx="32"
-          cy="32"
-          r="28"
-          stroke="currentColor"
-          strokeWidth="6"
-          fill="none"
-          className="text-muted"
-        />
+    <div className="relative inline-flex h-16 w-16 items-center justify-center">
+      <svg className="h-16 w-16 -rotate-90 transform">
+        <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="6" fill="none" className="text-muted" />
         <circle
           cx="32"
           cy="32"
@@ -65,17 +57,9 @@ export function BulkVerificationResult({
   );
 
   const RiskyProgress = () => (
-    <div className="relative inline-flex items-center justify-center w-16 h-16">
-      <svg className="transform -rotate-90 w-16 h-16">
-        <circle
-          cx="32"
-          cy="32"
-          r="28"
-          stroke="currentColor"
-          strokeWidth="6"
-          fill="none"
-          className="text-muted"
-        />
+    <div className="relative inline-flex h-16 w-16 items-center justify-center">
+      <svg className="h-16 w-16 -rotate-90 transform">
+        <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="6" fill="none" className="text-muted" />
         <circle
           cx="32"
           cy="32"
@@ -94,17 +78,9 @@ export function BulkVerificationResult({
   );
 
   const BadProgress = () => (
-    <div className="relative inline-flex items-center justify-center w-16 h-16">
-      <svg className="transform -rotate-90 w-16 h-16">
-        <circle
-          cx="32"
-          cy="32"
-          r="28"
-          stroke="currentColor"
-          strokeWidth="6"
-          fill="none"
-          className="text-muted"
-        />
+    <div className="relative inline-flex h-16 w-16 items-center justify-center">
+      <svg className="h-16 w-16 -rotate-90 transform">
+        <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="6" fill="none" className="text-muted" />
         <circle
           cx="32"
           cy="32"
@@ -128,7 +104,7 @@ export function BulkVerificationResult({
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-lg font-semibold">{fileName}</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-sm">
               {timestamp} • id: {reportId}
             </p>
           </div>
@@ -138,17 +114,17 @@ export function BulkVerificationResult({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Good Emails */}
-          <div className="flex items-center gap-4 p-4 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+          <div className="flex items-center gap-4 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
             <GoodProgress />
             <div className="flex-1">
-              <div className="flex items-baseline gap-2 mb-1">
+              <div className="mb-1 flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-emerald-500">{goodPercentage}%</span>
-                <span className="text-sm text-muted-foreground">Good</span>
+                <span className="text-muted-foreground text-sm">Good</span>
               </div>
-              <p className="text-lg font-semibold mb-1">{goodEmails}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="mb-1 text-lg font-semibold">{goodEmails}</p>
+              <p className="text-muted-foreground text-xs">
                 Good emails are valid, existing emails. It is safe to send emails to them.
               </p>
               <a href="#" className="text-xs text-emerald-500 hover:underline">
@@ -158,15 +134,15 @@ export function BulkVerificationResult({
           </div>
 
           {/* Risky Emails */}
-          <div className="flex items-center gap-4 p-4 rounded-lg bg-amber-500/5 border border-amber-500/20">
+          <div className="flex items-center gap-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
             <RiskyProgress />
             <div className="flex-1">
-              <div className="flex items-baseline gap-2 mb-1">
+              <div className="mb-1 flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-amber-500">{riskyPercentage}%</span>
-                <span className="text-sm text-muted-foreground">Risky</span>
+                <span className="text-muted-foreground text-sm">Risky</span>
               </div>
-              <p className="text-lg font-semibold mb-1">{riskyEmails}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="mb-1 text-lg font-semibold">{riskyEmails}</p>
+              <p className="text-muted-foreground text-xs">
                 Risky emails may exist or not. Learn more when to use them.
               </p>
               <a href="#" className="text-xs text-amber-500 hover:underline">
@@ -176,17 +152,15 @@ export function BulkVerificationResult({
           </div>
 
           {/* Bad Emails */}
-          <div className="flex items-center gap-4 p-4 rounded-lg bg-red-500/5 border border-red-500/20 md:col-span-2">
+          <div className="flex items-center gap-4 rounded-lg border border-red-500/20 bg-red-500/5 p-4 md:col-span-2">
             <BadProgress />
             <div className="flex-1">
-              <div className="flex items-baseline gap-2 mb-1">
+              <div className="mb-1 flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-red-500">{badPercentage}%</span>
-                <span className="text-sm text-muted-foreground">Bad</span>
+                <span className="text-muted-foreground text-sm">Bad</span>
               </div>
-              <p className="text-lg font-semibold mb-1">{badEmails}</p>
-              <p className="text-xs text-muted-foreground">
-                Bad emails don&apos;t exist, don&apos;t email them!
-              </p>
+              <p className="mb-1 text-lg font-semibold">{badEmails}</p>
+              <p className="text-muted-foreground text-xs">Bad emails don&apos;t exist, don&apos;t email them!</p>
               <a href="#" className="text-xs text-red-500 hover:underline">
                 Learn more »
               </a>
@@ -198,33 +172,33 @@ export function BulkVerificationResult({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
                 Download Reports
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="center">
-              <DropdownMenuItem onClick={() => onDownload('ok')}>
-                <CheckCircle2 className="h-4 w-4 mr-2 text-emerald-500" />
+              <DropdownMenuItem onClick={() => onDownload("ok")}>
+                <CheckCircle2 className="mr-2 h-4 w-4 text-emerald-500" />
                 Good Emails Only
               </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDownload('ok_and_catch_all')}>
-                      <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
-                      Risky Emails Only
-                    </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDownload('invalid')}>
-                <XCircle className="h-4 w-4 mr-2 text-red-500" />
+              <DropdownMenuItem onClick={() => onDownload("ok_and_catch_all")}>
+                <AlertTriangle className="mr-2 h-4 w-4 text-amber-500" />
+                Risky Emails Only
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDownload("invalid")}>
+                <XCircle className="mr-2 h-4 w-4 text-red-500" />
                 Invalid Emails Only
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDownload('disposable')}>
-                <XCircle className="h-4 w-4 mr-2 text-orange-500" />
+              <DropdownMenuItem onClick={() => onDownload("disposable")}>
+                <XCircle className="mr-2 h-4 w-4 text-orange-500" />
                 Disposable Emails Only
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDownload('unknown')}>
-                <XCircle className="h-4 w-4 mr-2 text-gray-500" />
+              <DropdownMenuItem onClick={() => onDownload("unknown")}>
+                <XCircle className="mr-2 h-4 w-4 text-gray-500" />
                 Unknown Emails Only
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDownload('all')}>
-                <FileText className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={() => onDownload("all")}>
+                <FileText className="mr-2 h-4 w-4" />
                 Full Report (All Results)
               </DropdownMenuItem>
             </DropdownMenuContent>

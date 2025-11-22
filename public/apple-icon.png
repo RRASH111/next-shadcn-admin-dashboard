@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <defs>
+    <linearGradient id="appleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="180" height="180" rx="40" fill="url(#appleGradient)"/>
+  
+  <!-- Z letter -->
+  <path d="M 50 50 L 130 50 L 130 60 L 70 120 L 130 120 L 130 130 L 50 130 L 50 120 L 110 60 L 50 60 Z" 
+        fill="white" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- Checkmark accent -->
+  <circle cx="135" cy="45" r="20" fill="white"/>
+  <path d="M 125 45 L 132 52 L 145 35" 
+        fill="none" stroke="url(#appleGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+

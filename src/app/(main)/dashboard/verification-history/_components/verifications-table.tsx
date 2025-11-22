@@ -1,30 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  getPaginationRowModel,
-} from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, flexRender, getPaginationRowModel } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { verificationColumns } from "./verification-columns";
@@ -60,47 +42,58 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/verification/history?limit=1000');
+      const response = await fetch("/api/verification/history?limit=1000");
       if (response.ok) {
         const result = await response.json();
-        
+
         // Transform API data to match our table structure
-        const transformedData: VerificationHistoryItem[] = result.history?.map((item: any) => ({
-          id: item.id,
-          email: item.email,
-          result: item.result === 'ok' ? 'Valid' : 
-                  item.result === 'invalid' ? 'Invalid' : 
-                  item.result === 'catch_all' ? 'Risky' : 'Unknown',
-          quality: item.result === 'ok' ? 'Excellent' : 
-                   item.result === 'invalid' ? 'Poor' : 
-                   item.result === 'catch_all' ? 'Fair' : 'Unknown',
-          subresult: item.subresult || '',
-          free: item.free || false,
-          role: item.role || false,
-          didyoumean: item.didyoumean || '',
-          credits: item.creditsUsed || 1,
-          executiontime: item.executionTime || 0,
-          error: item.error || '',
-          livemode: item.livemode || false,
-          createdAt: new Date(item.createdAt).toLocaleString(),
-        })) || [];
+        const transformedData: VerificationHistoryItem[] =
+          result.history?.map((item: any) => ({
+            id: item.id,
+            email: item.email,
+            result:
+              item.result === "ok"
+                ? "Valid"
+                : item.result === "invalid"
+                  ? "Invalid"
+                  : item.result === "catch_all"
+                    ? "Risky"
+                    : "Unknown",
+            quality:
+              item.result === "ok"
+                ? "Excellent"
+                : item.result === "invalid"
+                  ? "Poor"
+                  : item.result === "catch_all"
+                    ? "Fair"
+                    : "Unknown",
+            subresult: item.subresult || "",
+            free: item.free || false,
+            role: item.role || false,
+            didyoumean: item.didyoumean || "",
+            credits: item.creditsUsed || 1,
+            executiontime: item.executionTime || 0,
+            error: item.error || "",
+            livemode: item.livemode || false,
+            createdAt: new Date(item.createdAt).toLocaleString(),
+          })) || [];
 
         setData(transformedData);
         setTotal(result.total || 0);
       } else {
         const errorData = await response.json();
         // Check if it's a "User not found" error, which means no data yet
-        if (errorData.error === 'User not found') {
+        if (errorData.error === "User not found") {
           setData([]);
           setTotal(0);
           setError(null); // No error, just no data
         } else {
-          setError('Failed to load verification history');
+          setError("Failed to load verification history");
         }
       }
     } catch (error) {
-      console.error('Error fetching verification history:', error);
-      setError('Failed to load verification history');
+      console.error("Error fetching verification history:", error);
+      setError("Failed to load verification history");
     } finally {
       setLoading(false);
     }
@@ -123,10 +116,7 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
   });
 
   const startIndex = table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1;
-  const endIndex = Math.min(
-    startIndex + table.getRowModel().rows.length - 1,
-    data.length
-  );
+  const endIndex = Math.min(startIndex + table.getRowModel().rows.length - 1, data.length);
 
   if (loading) {
     return (
@@ -141,9 +131,7 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
     return (
       <div className="space-y-4">
         <Alert className="border-red-200 bg-red-50">
-          <AlertDescription className="text-red-800">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
         </Alert>
         <Button onClick={fetchVerificationHistory} variant="outline">
           Try Again
@@ -154,16 +142,14 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border overflow-hidden">
+      <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -174,9 +160,7 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -184,12 +168,8 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
               <TableRow>
                 <TableCell colSpan={verificationColumns.length} className="h-24 text-center">
                   <div className="flex flex-col items-center justify-center py-8">
-                    <div className="text-muted-foreground mb-2">
-                      No verifications yet
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Start by verifying your first email address
-                    </div>
+                    <div className="text-muted-foreground mb-2">No verifications yet</div>
+                    <div className="text-muted-foreground text-sm">Start by verifying your first email address</div>
                   </div>
                 </TableCell>
               </TableRow>
@@ -197,10 +177,10 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
           </TableBody>
         </Table>
       </div>
-      
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">Rows per page</p>
+          <p className="text-muted-foreground text-sm">Rows per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -221,7 +201,7 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             {data.length > 0 ? (
               <>
                 Showing {startIndex} to {endIndex} of {data.length} results
@@ -250,7 +230,7 @@ export function VerificationsTable({ initialPageSize = 10 }: VerificationsTableP
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
             </div>
             <Button

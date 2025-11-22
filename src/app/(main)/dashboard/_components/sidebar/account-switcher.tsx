@@ -33,7 +33,7 @@ export function AccountSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="size-9 rounded-lg cursor-pointer">
+        <Avatar className="size-9 cursor-pointer rounded-lg">
           <AvatarImage src={user.imageUrl || undefined} alt={user.fullName || ""} />
           <AvatarFallback className="rounded-lg">
             {getInitials(user.fullName || user.emailAddresses[0]?.emailAddress || "User")}
@@ -50,9 +50,7 @@ export function AccountSwitcher() {
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">{user.fullName || "User"}</span>
-            <span className="truncate text-xs text-muted-foreground">
-              {user.emailAddresses[0]?.emailAddress}
-            </span>
+            <span className="text-muted-foreground truncate text-xs">{user.emailAddresses[0]?.emailAddress}</span>
           </div>
         </div>
         <DropdownMenuSeparator />

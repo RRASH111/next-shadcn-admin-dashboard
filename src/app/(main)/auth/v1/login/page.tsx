@@ -26,12 +26,12 @@ export default function LoginV1() {
             </div>
           </div>
           <div className="flex justify-center">
-            <SignIn 
+            <SignIn
               appearance={{
                 elements: {
                   rootBox: "mx-auto",
                   card: "shadow-none",
-                }
+                },
               }}
             />
           </div>

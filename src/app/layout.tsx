@@ -17,6 +17,30 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: APP_CONFIG.meta.title,
   description: APP_CONFIG.meta.description,
+  applicationName: APP_CONFIG.name,
+  keywords: ["email verification", "email validation", "bulk email verification", "email checker", "ZenVerifier"],
+  authors: [{ name: "ZenVerifier" }],
+  creator: "ZenVerifier",
+  publisher: "ZenVerifier",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: APP_CONFIG.name,
+    title: APP_CONFIG.meta.title,
+    description: APP_CONFIG.meta.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: APP_CONFIG.meta.title,
+    description: APP_CONFIG.meta.description,
+  },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

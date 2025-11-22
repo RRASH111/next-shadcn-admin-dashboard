@@ -1,38 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/prisma';
-import { MillionVerifierAPI, APIError } from '@/lib/millionverifier';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import { MillionVerifierAPI, APIError } from "@/lib/millionverifier";
 
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Get file ID from query parameters
     const { searchParams } = new URL(request.url);
-    const fileId = searchParams.get('fileId');
+    const fileId = searchParams.get("fileId");
 
     if (!fileId) {
-      return NextResponse.json(
-        { error: 'File ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "File ID is required" }, { status: 400 });
     }
 
     // Initialize MillionVerifier API with environment key
@@ -43,10 +37,10 @@ export async function GET(request: NextRequest) {
 
     // Update local database with latest information
     const existingJob = await prisma.bulkJob.findFirst({
-      where: { 
+      where: {
         userId: user.id,
-        fileId: fileId 
-      }
+        fileId: fileId,
+      },
     });
 
     if (existingJob) {
@@ -68,8 +62,8 @@ export async function GET(request: NextRequest) {
           credit: result.credit,
           estimatedTimeSec: result.estimated_time_sec,
           errorMessage: result.error || null,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       });
     } else {
       // Create new job
@@ -91,26 +85,19 @@ export async function GET(request: NextRequest) {
           reverifyCount: result.reverify,
           credit: result.credit,
           estimatedTimeSec: result.estimated_time_sec,
-          errorMessage: result.error || null
-        }
+          errorMessage: result.error || null,
+        },
       });
     }
 
     return NextResponse.json(result);
-
   } catch (error) {
-    console.error('Bulk job status error:', error);
-    
+    console.error("Bulk job status error:", error);
+
     if (error instanceof APIError) {
-      return NextResponse.json(
-        { error: error.message, code: error.code },
-        { status: error.statusCode }
-      );
+      return NextResponse.json({ error: error.message, code: error.code }, { status: error.statusCode });
     }
-    
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

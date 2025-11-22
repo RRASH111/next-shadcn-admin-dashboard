@@ -9,7 +9,7 @@ export default function VerificationHistoryPage() {
         <History className="h-8 w-8" />
         <h1 className="text-3xl font-bold">Verification History</h1>
       </div>
-      
+
       <div className="rounded-lg border p-6">
         <VerificationsTable />
       </div>

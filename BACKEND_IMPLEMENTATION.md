@@ -11,13 +11,14 @@ This document outlines the complete backend implementation for the MillionVerifi
 ✅ **Authentication** - Clerk integration with API key management  
 ✅ **Error Handling** - Comprehensive error handling and validation  
 ✅ **Utility Classes** - MillionVerifier API wrapper and validation schemas  
-✅ **Frontend Integration** - API key settings page and updated navigation  
+✅ **Frontend Integration** - API key settings page and updated navigation
 
 ## 🗄️ Database Schema
 
 ### New Tables Added
 
 #### VerificationHistory
+
 ```sql
 - id: String (Primary Key)
 - userId: String (Foreign Key)
@@ -37,6 +38,7 @@ This document outlines the complete backend implementation for the MillionVerifi
 ```
 
 #### BulkJob
+
 ```sql
 - id: String (Primary Key)
 - userId: String (Foreign Key)
@@ -61,6 +63,7 @@ This document outlines the complete backend implementation for the MillionVerifi
 ```
 
 #### CreditTransaction
+
 ```sql
 - id: String (Primary Key)
 - userId: String (Foreign Key)
@@ -75,6 +78,7 @@ This document outlines the complete backend implementation for the MillionVerifi
 ### Updated Tables
 
 #### User
+
 ```sql
 + millionverifierApiKey: String? (New field for API key storage)
 ```
@@ -82,15 +86,18 @@ This document outlines the complete backend implementation for the MillionVerifi
 ## 🔌 API Endpoints
 
 ### Authentication
+
 All endpoints require Clerk authentication. User must be logged in.
 
 ### Single Email Verification
+
 - **POST** `/api/verification/single`
 - **Body**: `{ "email": "test@example.com", "timeout": 20 }`
 - **Response**: MillionVerifier API response
 - **Features**: Real-time verification, credit deduction, history storage
 
 ### Bulk Email Verification
+
 - **POST** `/api/verification/bulk/upload`
 - **Body**: FormData with CSV file
 - **Response**: Upload result with file ID
@@ -120,17 +127,20 @@ All endpoints require Clerk authentication. User must be logged in.
 - **Features**: Job deletion, cleanup
 
 ### Credits Management
+
 - **GET** `/api/credits/balance`
 - **Response**: Current credit balance
 - **Features**: Real-time balance from MillionVerifier
 
 ### Verification History
+
 - **GET** `/api/verification/history`
 - **Query**: Filters (page, limit, email, result, quality, dates)
 - **Response**: Paginated history with statistics
 - **Features**: Advanced filtering, pagination, statistics
 
 ### API Key Management
+
 - **GET** `/api/settings/api-key`
 - **Response**: Current API key status (masked)
 - **Features**: Secure key display
@@ -147,7 +157,9 @@ All endpoints require Clerk authentication. User must be logged in.
 ## 🛠️ Utility Classes
 
 ### MillionVerifierAPI
+
 Complete wrapper class for MillionVerifier API with:
+
 - Single email verification
 - Credits checking
 - Bulk file operations (upload, status, download, stop, delete)
@@ -155,7 +167,9 @@ Complete wrapper class for MillionVerifier API with:
 - Type safety
 
 ### Validation Schemas
+
 Zod schemas for:
+
 - Email validation
 - Single verification requests
 - Bulk file validation
@@ -164,6 +178,7 @@ Zod schemas for:
 - Pagination
 
 ### Error Handling
+
 - Custom APIError class
 - MillionVerifier-specific error mapping
 - HTTP status code mapping
@@ -172,12 +187,14 @@ Zod schemas for:
 ## 🎨 Frontend Integration
 
 ### API Key Settings Page
+
 - Secure API key management
 - Masked key display
 - Test API key suggestions
 - Real-time status updates
 
 ### Updated Navigation
+
 - Added Settings section
 - API Key management link
 - Proper icon integration
@@ -193,26 +210,27 @@ Zod schemas for:
 
 ## 📊 Features Mapping
 
-| Frontend Feature | Backend Implementation | MillionVerifier API |
-|------------------|----------------------|-------------------|
-| Dashboard Overview | `/api/credits/balance` | `/api/v3/credits` |
-| Single Verification | `/api/verification/single` | `/api/v3` |
-| Bulk Upload | `/api/verification/bulk/upload` | `/bulkapi/v2/upload` |
-| Bulk Jobs List | `/api/verification/bulk/list` | `/bulkapi/v2/filelist` |
-| Job Status | `/api/verification/bulk/status` | `/bulkapi/v2/fileinfo` |
-| Download Results | `/api/verification/bulk/download` | `/bulkapi/v2/download` |
-| Stop Job | `/api/verification/bulk/stop` | `/bulkapi/stop` |
-| Delete Job | `/api/verification/bulk/delete` | `/bulkapi/v2/delete` |
-| Verification History | `/api/verification/history` | Database + API sync |
-| API Key Management | `/api/settings/api-key` | Database storage |
+| Frontend Feature     | Backend Implementation            | MillionVerifier API    |
+| -------------------- | --------------------------------- | ---------------------- |
+| Dashboard Overview   | `/api/credits/balance`            | `/api/v3/credits`      |
+| Single Verification  | `/api/verification/single`        | `/api/v3`              |
+| Bulk Upload          | `/api/verification/bulk/upload`   | `/bulkapi/v2/upload`   |
+| Bulk Jobs List       | `/api/verification/bulk/list`     | `/bulkapi/v2/filelist` |
+| Job Status           | `/api/verification/bulk/status`   | `/bulkapi/v2/fileinfo` |
+| Download Results     | `/api/verification/bulk/download` | `/bulkapi/v2/download` |
+| Stop Job             | `/api/verification/bulk/stop`     | `/bulkapi/stop`        |
+| Delete Job           | `/api/verification/bulk/delete`   | `/bulkapi/v2/delete`   |
+| Verification History | `/api/verification/history`       | Database + API sync    |
+| API Key Management   | `/api/settings/api-key`           | Database storage       |
 
 ## 🚀 Getting Started
 
 1. **Environment Setup**
+
    ```bash
    # Copy environment template
    cp .env.example .env
-   
+
    # Configure your variables
    DATABASE_URL="postgresql://..."
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="..."
@@ -220,6 +238,7 @@ Zod schemas for:
    ```
 
 2. **Database Setup**
+
    ```bash
    # Run migrations
    npx prisma migrate dev
@@ -227,6 +246,7 @@ Zod schemas for:
    ```
 
 3. **Install Dependencies**
+
    ```bash
    npm install
    ```
@@ -239,31 +259,34 @@ Zod schemas for:
 ## 🧪 Testing
 
 ### Test API Keys
+
 Use MillionVerifier test keys for development:
+
 - `API_KEY_FOR_TEST` - Random results
 - `API_KEY_FOR_OK` - Always "ok"
 - `API_KEY_FOR_INVALID` - Always "invalid"
 - `API_KEY_FOR_ERROR` - Always error
 
 ### Example API Calls
+
 ```javascript
 // Single verification
-const response = await fetch('/api/verification/single', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email: 'test@example.com' })
+const response = await fetch("/api/verification/single", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "test@example.com" }),
 });
 
 // Bulk upload
 const formData = new FormData();
-formData.append('file', csvFile);
-const response = await fetch('/api/verification/bulk/upload', {
-  method: 'POST',
-  body: formData
+formData.append("file", csvFile);
+const response = await fetch("/api/verification/bulk/upload", {
+  method: "POST",
+  body: formData,
 });
 
 // Get credits
-const response = await fetch('/api/credits/balance');
+const response = await fetch("/api/credits/balance");
 ```
 
 ## 📈 Performance Considerations

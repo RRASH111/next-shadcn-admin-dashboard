@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
-import { 
-  CircleUser, 
-  Mail, 
-  Calendar, 
-  Shield, 
-  Key, 
-  Building2, 
-  Users, 
+import {
+  CircleUser,
+  Mail,
+  Calendar,
+  Shield,
+  Key,
+  Building2,
+  Users,
   CreditCard,
   Settings,
   Edit,
@@ -18,7 +18,7 @@ import {
   CheckCircle,
   AlertCircle,
   Eye,
-  EyeOff
+  EyeOff,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -63,7 +63,7 @@ export default function AccountPage() {
         lastActive: new Date().toLocaleDateString(),
       });
     } catch (error) {
-      console.error('Error fetching user stats:', error);
+      console.error("Error fetching user stats:", error);
     } finally {
       setLoading(false);
     }
@@ -74,10 +74,10 @@ export default function AccountPage() {
   };
 
   const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -89,7 +89,7 @@ export default function AccountPage() {
           <h1 className="text-3xl font-bold">Account Settings</h1>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
       </div>
     );
@@ -141,39 +141,19 @@ export default function AccountPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    value={user?.firstName || ""}
-                    disabled
-                    className="bg-muted"
-                  />
+                  <Input id="firstName" value={user?.firstName || ""} disabled className="bg-muted" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    value={user?.lastName || ""}
-                    disabled
-                    className="bg-muted"
-                  />
+                  <Input id="lastName" value={user?.lastName || ""} disabled className="bg-muted" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    value={user?.username || ""}
-                    disabled
-                    className="bg-muted"
-                  />
+                  <Input id="username" value={user?.username || ""} disabled className="bg-muted" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    value={user?.emailAddresses[0]?.emailAddress || ""}
-                    disabled
-                    className="bg-muted"
-                  />
+                  <Input id="email" value={user?.emailAddresses[0]?.emailAddress || ""} disabled className="bg-muted" />
                 </div>
               </div>
 
@@ -181,7 +161,7 @@ export default function AccountPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   To update your profile information, please use the{" "}
-                  <Button variant="link" className="p-0 h-auto" onClick={handleOpenProfile}>
+                  <Button variant="link" className="h-auto p-0" onClick={handleOpenProfile}>
                     Clerk User Profile
                   </Button>{" "}
                   interface.
@@ -202,19 +182,19 @@ export default function AccountPage() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold">{userStats?.totalVerifications.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Total Verifications</div>
+                  <div className="text-muted-foreground text-sm">Total Verifications</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold">{userStats?.creditsUsed.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Credits Used</div>
+                  <div className="text-muted-foreground text-sm">Credits Used</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold">{userStats?.creditsRemaining.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Credits Remaining</div>
+                  <div className="text-muted-foreground text-sm">Credits Remaining</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold">{userStats?.memberSince}</div>
-                  <div className="text-sm text-muted-foreground">Member Since</div>
+                  <div className="text-muted-foreground text-sm">Member Since</div>
                 </div>
               </div>
             </CardContent>
@@ -235,10 +215,10 @@ export default function AccountPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Password</h4>
-                    <p className="text-sm text-muted-foreground">Last updated: {formatDate(new Date())}</p>
+                    <p className="text-muted-foreground text-sm">Last updated: {formatDate(new Date())}</p>
                   </div>
                   <Button variant="outline" onClick={handleOpenProfile}>
-                    <Key className="h-4 w-4 mr-2" />
+                    <Key className="mr-2 h-4 w-4" />
                     Change Password
                   </Button>
                 </div>
@@ -248,12 +228,12 @@ export default function AccountPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Two-Factor Authentication</h4>
-                    <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
+                    <p className="text-muted-foreground text-sm">Add an extra layer of security</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">Not Enabled</Badge>
                     <Button variant="outline" onClick={handleOpenProfile}>
-                      <Settings className="h-4 w-4 mr-2" />
+                      <Settings className="mr-2 h-4 w-4" />
                       Setup 2FA
                     </Button>
                   </div>
@@ -264,19 +244,19 @@ export default function AccountPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium">Email Verification</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Status: {user?.emailAddresses[0]?.verification?.status === "verified" ? "Verified" : "Unverified"}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     {user?.emailAddresses[0]?.verification?.status === "verified" ? (
                       <Badge className="bg-green-100 text-green-800">
-                        <CheckCircle className="h-3 w-3 mr-1" />
+                        <CheckCircle className="mr-1 h-3 w-3" />
                         Verified
                       </Badge>
                     ) : (
                       <Badge variant="destructive">
-                        <AlertCircle className="h-3 w-3 mr-1" />
+                        <AlertCircle className="mr-1 h-3 w-3" />
                         Unverified
                       </Badge>
                     )}
@@ -288,7 +268,7 @@ export default function AccountPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   Security settings are managed through Clerk. Use the{" "}
-                  <Button variant="link" className="p-0 h-auto" onClick={handleOpenProfile}>
+                  <Button variant="link" className="h-auto p-0" onClick={handleOpenProfile}>
                     User Profile
                   </Button>{" "}
                   to update your security preferences.
@@ -307,12 +287,12 @@ export default function AccountPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center justify-between rounded-lg border p-3">
                   <div className="flex items-center gap-3">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
                     <div>
                       <div className="font-medium">Current Session</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-muted-foreground text-sm">
                         Chrome on Windows • {new Date().toLocaleString()}
                       </div>
                     </div>
@@ -335,12 +315,12 @@ export default function AccountPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
-                  <Building2 className="h-6 w-6 text-muted-foreground" />
+                <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-lg">
+                  <Building2 className="text-muted-foreground h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Personal Organization</h3>
-                  <p className="text-sm text-muted-foreground">Owner</p>
+                  <p className="text-muted-foreground text-sm">Owner</p>
                 </div>
               </div>
 
@@ -383,13 +363,13 @@ export default function AccountPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="text-center p-4 border rounded-lg">
+                <div className="rounded-lg border p-4 text-center">
                   <div className="text-2xl font-bold">{userStats?.creditsRemaining.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Credits Remaining</div>
+                  <div className="text-muted-foreground text-sm">Credits Remaining</div>
                 </div>
-                <div className="text-center p-4 border rounded-lg">
+                <div className="rounded-lg border p-4 text-center">
                   <div className="text-2xl font-bold">{userStats?.creditsUsed.toLocaleString()}</div>
-                  <div className="text-sm text-muted-foreground">Credits Used</div>
+                  <div className="text-muted-foreground text-sm">Credits Used</div>
                 </div>
               </div>
 
@@ -398,12 +378,12 @@ export default function AccountPage() {
               <div className="space-y-4">
                 <h4 className="font-medium">Quick Actions</h4>
                 <div className="flex gap-2">
-                  <Button onClick={() => window.location.href = '/dashboard/topup'}>
-                    <CreditCard className="h-4 w-4 mr-2" />
+                  <Button onClick={() => (window.location.href = "/dashboard/topup")}>
+                    <CreditCard className="mr-2 h-4 w-4" />
                     Add Credits
                   </Button>
-                  <Button variant="outline" onClick={() => window.location.href = '/dashboard/billing'}>
-                    <Settings className="h-4 w-4 mr-2" />
+                  <Button variant="outline" onClick={() => (window.location.href = "/dashboard/billing")}>
+                    <Settings className="mr-2 h-4 w-4" />
                     Manage Billing
                   </Button>
                 </div>

@@ -1,7 +1,7 @@
 export interface SingleVerificationResult {
   email: string;
   quality: string;
-  result: 'ok' | 'catch_all' | 'unknown' | 'error' | 'disposable' | 'invalid';
+  result: "ok" | "catch_all" | "unknown" | "error" | "disposable" | "invalid";
   resultcode: 1 | 2 | 3 | 4 | 5 | 6;
   subresult: string;
   free: boolean;
@@ -49,92 +49,85 @@ export interface BulkFileListResponse {
 
 export class MillionVerifierAPI {
   private apiKey: string;
-  private baseUrl = 'https://api.millionverifier.com';
-  private bulkUrl = 'https://bulkapi.millionverifier.com';
+  private baseUrl = "https://api.millionverifier.com";
+  private bulkUrl = "https://bulkapi.millionverifier.com";
 
   constructor() {
-    this.apiKey = process.env.MILLION_VERIFIER_API_KEY || '';
+    this.apiKey = process.env.MILLION_VERIFIER_API_KEY || "";
     if (!this.apiKey) {
-      throw new Error('MILLION_VERIFIER_API_KEY environment variable is not set');
+      throw new Error("MILLION_VERIFIER_API_KEY environment variable is not set");
     }
   }
 
   async verifyEmail(email: string, timeout = 20): Promise<SingleVerificationResult> {
     const response = await fetch(
-      `${this.baseUrl}/api/v3/?api=${this.apiKey}&email=${encodeURIComponent(email)}&timeout=${timeout}`
+      `${this.baseUrl}/api/v3/?api=${this.apiKey}&email=${encodeURIComponent(email)}&timeout=${timeout}`,
     );
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    
+
     if (result.error) {
       throw new Error(result.error);
     }
-    
+
     return result;
   }
 
   async getCredits(): Promise<CreditsResponse> {
-    const response = await fetch(
-      `${this.baseUrl}/api/v3/credits?api=${this.apiKey}`
-    );
-    
+    const response = await fetch(`${this.baseUrl}/api/v3/credits?api=${this.apiKey}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    
+
     if (result.error) {
       throw new Error(result.error);
     }
-    
+
     return result;
   }
 
   async uploadBulkFile(file: File): Promise<BulkUploadResult> {
     const formData = new FormData();
-    formData.append('file_contents', file);
-    
-    const response = await fetch(
-      `${this.bulkUrl}/bulkapi/v2/upload?key=${this.apiKey}`,
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
-    
+    formData.append("file_contents", file);
+
+    const response = await fetch(`${this.bulkUrl}/bulkapi/v2/upload?key=${this.apiKey}`, {
+      method: "POST",
+      body: formData,
+    });
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    
+
     if (result.error) {
       throw new Error(result.error);
     }
-    
+
     return result;
   }
 
   async getBulkFileInfo(fileId: string): Promise<BulkUploadResult> {
-    const response = await fetch(
-      `${this.bulkUrl}/bulkapi/v2/fileinfo?key=${this.apiKey}&file_id=${fileId}`
-    );
-    
+    const response = await fetch(`${this.bulkUrl}/bulkapi/v2/fileinfo?key=${this.apiKey}&file_id=${fileId}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    
+
     if (result.error) {
       throw new Error(result.error);
     }
-    
+
     return result;
   }
 
@@ -153,7 +146,7 @@ export class MillionVerifierAPI {
     has_error?: string;
   }): Promise<BulkFileListResponse> {
     const params = new URLSearchParams({ key: this.apiKey });
-    
+
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -161,39 +154,37 @@ export class MillionVerifierAPI {
         }
       });
     }
-    
-    const response = await fetch(
-      `${this.bulkUrl}/bulkapi/v2/filelist?${params}`
-    );
-    
+
+    const response = await fetch(`${this.bulkUrl}/bulkapi/v2/filelist?${params}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    
+
     if (result.error) {
       throw new Error(result.error);
     }
-    
+
     return result;
   }
 
   async downloadBulkResults(
-    fileId: string, 
-    filter: 'ok' | 'ok_and_catch_all' | 'unknown' | 'invalid' | 'all' | 'custom' = 'all',
+    fileId: string,
+    filter: "ok" | "ok_and_catch_all" | "unknown" | "invalid" | "all" | "custom" = "all",
     options?: {
       statuses?: string;
-      free?: '1' | '0';
-      role?: '1' | '0';
-    }
+      free?: "1" | "0";
+      role?: "1" | "0";
+    },
   ): Promise<Response> {
     const params = new URLSearchParams({
       key: this.apiKey,
       file_id: fileId,
-      filter
+      filter,
     });
-    
+
     if (options) {
       Object.entries(options).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -201,39 +192,33 @@ export class MillionVerifierAPI {
         }
       });
     }
-    
-    const response = await fetch(
-      `${this.bulkUrl}/bulkapi/v2/download?${params}`
-    );
-    
+
+    const response = await fetch(`${this.bulkUrl}/bulkapi/v2/download?${params}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return response;
   }
 
   async stopBulkProcessing(fileId: string): Promise<{ result?: string; error?: string }> {
-    const response = await fetch(
-      `${this.bulkUrl}/bulkapi/stop?key=${this.apiKey}&file_id=${fileId}`
-    );
-    
+    const response = await fetch(`${this.bulkUrl}/bulkapi/stop?key=${this.apiKey}&file_id=${fileId}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return response.json();
   }
 
   async deleteBulkFile(fileId: string): Promise<{ result?: string; error?: string }> {
-    const response = await fetch(
-      `${this.bulkUrl}/bulkapi/v2/delete?key=${this.apiKey}&file_id=${fileId}`
-    );
-    
+    const response = await fetch(`${this.bulkUrl}/bulkapi/v2/delete?key=${this.apiKey}&file_id=${fileId}`);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return response.json();
   }
 }
@@ -242,32 +227,32 @@ export class APIError extends Error {
   constructor(
     public statusCode: number,
     message: string,
-    public code?: string
+    public code?: string,
   ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 }
 
 export function handleMillionVerifierError(response: any): never {
   if (response.error) {
     switch (response.error) {
-      case 'apikey_not_found':
-        throw new APIError(401, 'Invalid API key', 'INVALID_API_KEY');
-      case 'insufficient_credits':
-        throw new APIError(402, 'Insufficient credits', 'INSUFFICIENT_CREDITS');
-      case 'No email specified':
-        throw new APIError(400, 'Email address is required', 'MISSING_EMAIL');
-      case 'parameter file_id is empty':
-        throw new APIError(400, 'File ID is required', 'MISSING_FILE_ID');
-      case 'file_not_found':
-        throw new APIError(404, 'File not found', 'FILE_NOT_FOUND');
-      case 'unsupported filter value':
-        throw new APIError(400, 'Unsupported filter value', 'INVALID_FILTER');
+      case "apikey_not_found":
+        throw new APIError(401, "Invalid API key", "INVALID_API_KEY");
+      case "insufficient_credits":
+        throw new APIError(402, "Insufficient credits", "INSUFFICIENT_CREDITS");
+      case "No email specified":
+        throw new APIError(400, "Email address is required", "MISSING_EMAIL");
+      case "parameter file_id is empty":
+        throw new APIError(400, "File ID is required", "MISSING_FILE_ID");
+      case "file_not_found":
+        throw new APIError(404, "File not found", "FILE_NOT_FOUND");
+      case "unsupported filter value":
+        throw new APIError(400, "Unsupported filter value", "INVALID_FILTER");
       default:
-        throw new APIError(400, response.error, 'API_ERROR');
+        throw new APIError(400, response.error, "API_ERROR");
     }
   }
-  
-  throw new APIError(500, 'Unknown API error', 'UNKNOWN_ERROR');
+
+  throw new APIError(500, "Unknown API error", "UNKNOWN_ERROR");
 }

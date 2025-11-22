@@ -28,9 +28,7 @@
   "paths": {
     "/api/v3": {
       "get": {
-        "tags": [
-          "Single API"
-        ],
+        "tags": ["Single API"],
         "summary": "Verify an email address in real time",
         "description": "Verify an email address in real time and get resutls in just a second.",
         "operationId": "single-verification",
@@ -126,9 +124,7 @@
     },
     "/api/v3/credits": {
       "get": {
-        "tags": [
-          "API credits"
-        ],
+        "tags": ["API credits"],
         "summary": "API credits",
         "description": "Check the amount of available credits",
         "operationId": "api-credits",
@@ -219,9 +215,7 @@
         }
       ],
       "post": {
-        "tags": [
-          "Bulk API"
-        ],
+        "tags": ["Bulk API"],
         "summary": "File upload",
         "description": "Upload file containing email addresses for verification",
         "operationId": "bulk-upload",
@@ -316,9 +310,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Bulk API"
-        ],
+        "tags": ["Bulk API"],
         "summary": "File info",
         "description": "Get info of the uploaded file",
         "operationId": "bulk-fileinfo",
@@ -399,9 +391,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Bulk API"
-        ],
+        "tags": ["Bulk API"],
         "summary": "Files list",
         "description": "Get a list of files according to the given filters",
         "operationId": "bulk-filelist",
@@ -463,14 +453,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "in_progress",
-                "error",
-                "finished",
-                "canceled",
-                "paused",
-                "in_queue_to_start"
-              ],
+              "enum": ["in_progress", "error", "finished", "canceled", "paused", "in_queue_to_start"],
               "example": "in_progress,error"
             }
           },
@@ -545,20 +528,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "1",
-                "t",
-                "T",
-                "TRUE",
-                "True",
-                "true",
-                "0",
-                "f",
-                "F",
-                "FALSE",
-                "False",
-                "false"
-              ],
+              "enum": ["1", "t", "T", "TRUE", "True", "true", "0", "f", "F", "FALSE", "False", "false"],
               "example": 0
             }
           }
@@ -632,9 +602,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Bulk API"
-        ],
+        "tags": ["Bulk API"],
         "summary": "Download report",
         "description": "Download report of the verification result",
         "operationId": "bulk-download",
@@ -666,14 +634,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": [
-                "ok",
-                "ok_and_catch_all",
-                "unknown",
-                "invalid",
-                "all",
-                "custom"
-              ],
+              "enum": ["ok", "ok_and_catch_all", "unknown", "invalid", "all", "custom"],
               "example": "all"
             }
           },
@@ -683,13 +644,7 @@
             "description": "When the 'custom' filter is used, result statuses can be given as a comma separated values. If omitted, then all statuses will be in the results",
             "schema": {
               "type": "string",
-              "enum": [
-                "ok",
-                "catch_all",
-                "unknown",
-                "invalid",
-                "disposable"
-              ],
+              "enum": ["ok", "catch_all", "unknown", "invalid", "disposable"],
               "example": "ok,disposable,invalid"
             }
           },
@@ -699,10 +654,7 @@
             "description": "When the 'custom' filter is used, this option decides whether to filter for free domains or not. If omitted, both type of domains will be in the results",
             "schema": {
               "type": "string",
-              "enum": [
-                "1",
-                "0"
-              ]
+              "enum": ["1", "0"]
             }
           },
           {
@@ -711,10 +663,7 @@
             "description": "When the 'custom' filter is used, this option decides whether to filter for role emails or not. If omitted, both type of emails will be in the results",
             "schema": {
               "type": "string",
-              "enum": [
-                "1",
-                "0"
-              ]
+              "enum": ["1", "0"]
             }
           }
         ],
@@ -802,9 +751,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Bulk API"
-        ],
+        "tags": ["Bulk API"],
         "summary": "Stop a file in Progress",
         "description": "This will cancel the file in progress and the results for already verified emails can be downloaded in a few seconds",
         "operationId": "bulk-stop",
@@ -892,9 +839,7 @@
         }
       ],
       "get": {
-        "tags": [
-          "Bulk API"
-        ],
+        "tags": ["Bulk API"],
         "summary": "Delete a file",
         "description": "This will delete a file uploaded to the bulk API",
         "operationId": "bulk-delete",
@@ -1149,35 +1094,16 @@
             "type": "string",
             "description": "The quality of the email address.",
             "example": "good",
-            "enum": [
-              "",
-              "good",
-              "bad",
-              "risky"
-            ]
+            "enum": ["", "good", "bad", "risky"]
           },
           "result": {
             "type": "string",
             "description": "The result of email verification.",
             "example": "invalid",
-            "enum": [
-              "ok",
-              "catch_all",
-              "unknown",
-              "error",
-              "disposable",
-              "invalid"
-            ]
+            "enum": ["ok", "catch_all", "unknown", "error", "disposable", "invalid"]
           },
           "resultcode": {
-            "enum": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "enum": [1, 2, 3, 4, 5, 6],
             "type": "integer",
             "description": "The result of email verification as an integer. 1 (ok), 2 (catch_all), 3 (unknown), 4 (error), 5 (disposable), 6 (invalid)",
             "example": 6
@@ -1235,37 +1161,18 @@
             "type": "string",
             "description": "The quality of the email address.",
             "example": "",
-            "enum": [
-              "",
-              "good",
-              "bad",
-              "risky"
-            ]
+            "enum": ["", "good", "bad", "risky"]
           },
           "result": {
             "type": "string",
             "description": "The result of email verification.",
-            "enum": [
-              "ok",
-              "catch_all",
-              "unknown",
-              "error",
-              "disposable",
-              "invalid"
-            ],
+            "enum": ["ok", "catch_all", "unknown", "error", "disposable", "invalid"],
             "example": "error"
           },
           "resultcode": {
             "type": "integer",
             "description": "The result of email verification as an integer. 1 (ok), 2 (catch_all), 3 (unknown), 4 (error), 5 (disposable), 6 (invalid)",
-            "enum": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "enum": [1, 2, 3, 4, 5, 6],
             "example": 4
           },
           "subresult": {
@@ -1321,37 +1228,18 @@
             "type": "string",
             "description": "The quality of the email address.",
             "example": "",
-            "enum": [
-              "",
-              "good",
-              "bad",
-              "risky"
-            ]
+            "enum": ["", "good", "bad", "risky"]
           },
           "result": {
             "type": "string",
             "description": "The result of email verification.",
-            "enum": [
-              "ok",
-              "catch_all",
-              "unknown",
-              "error",
-              "disposable",
-              "invalid"
-            ],
+            "enum": ["ok", "catch_all", "unknown", "error", "disposable", "invalid"],
             "example": "error"
           },
           "resultcode": {
             "type": "integer",
             "description": "The result of email verification as an integer. 1 (ok), 2 (catch_all), 3 (unknown), 4 (error), 5 (disposable), 6 (invalid)",
-            "enum": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6
-            ],
+            "enum": [1, 2, 3, 4, 5, 6],
             "example": 4
           },
           "subresult": {

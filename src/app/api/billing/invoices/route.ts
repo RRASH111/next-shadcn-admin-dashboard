@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -14,7 +14,7 @@ export async function GET() {
     // Get user's organization
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { organization: true }
+      include: { organization: true },
     });
 
     if (!user?.organization?.stripeCustomerId) {
@@ -28,14 +28,14 @@ export async function GET() {
     });
 
     return NextResponse.json(
-      invoices.data.map(invoice => ({
+      invoices.data.map((invoice) => ({
         id: invoice.id,
         amount: invoice.amount_paid,
         currency: invoice.currency,
         status: invoice.status,
         created: new Date(invoice.created * 1000).toISOString(),
         invoicePdf: invoice.invoice_pdf,
-      }))
+      })),
     );
   } catch (error) {
     console.error("Error fetching invoices:", error);

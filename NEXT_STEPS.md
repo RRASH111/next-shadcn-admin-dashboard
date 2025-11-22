@@ -1,6 +1,7 @@
 # Next Steps Checklist
 
 ## ✅ Completed
+
 - [x] Prisma schema created with User, Organization, Membership, and Subscription models
 - [x] Clerk authentication integrated
 - [x] Stripe payment configuration added
@@ -11,6 +12,7 @@
 ## 🔧 Configuration Needed
 
 ### 1. Database Setup
+
 You need to set up your PostgreSQL database. You have a Neon database URL in your `.env` file:
 
 ```bash
@@ -97,6 +99,7 @@ STRIPE_WEBHOOK_SECRET="whsec_..."
 ### 4. Testing Webhooks Locally
 
 #### For Stripe:
+
 ```bash
 # Install Stripe CLI
 # Then run:
@@ -105,7 +108,9 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 ```
 
 #### For Clerk:
+
 Use ngrok to expose your local server:
+
 ```bash
 ngrok http 3000
 # Use the ngrok URL in Clerk webhook settings

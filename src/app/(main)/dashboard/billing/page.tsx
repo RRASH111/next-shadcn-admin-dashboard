@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { 
-  CreditCard, 
-  Calendar, 
-  DollarSign, 
-  Download, 
-  Settings, 
+import {
+  CreditCard,
+  Calendar,
+  DollarSign,
+  Download,
+  Settings,
   AlertCircle,
   CheckCircle,
   Clock,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -65,9 +65,9 @@ export default function BillingPage() {
     try {
       // Fetch subscription, payment methods, and invoices
       const [subscriptionRes, paymentMethodsRes, invoicesRes] = await Promise.all([
-        fetch('/api/billing/subscription'),
-        fetch('/api/billing/payment-methods'),
-        fetch('/api/billing/invoices')
+        fetch("/api/billing/subscription"),
+        fetch("/api/billing/payment-methods"),
+        fetch("/api/billing/invoices"),
       ]);
 
       if (subscriptionRes.ok) {
@@ -85,7 +85,7 @@ export default function BillingPage() {
         setInvoices(invData);
       }
     } catch (error) {
-      console.error('Error fetching billing data:', error);
+      console.error("Error fetching billing data:", error);
     } finally {
       setLoading(false);
     }
@@ -94,10 +94,10 @@ export default function BillingPage() {
   const handleManageBilling = async () => {
     setPortalLoading(true);
     try {
-      const response = await fetch('/api/billing/create-portal-session', {
-        method: 'POST',
+      const response = await fetch("/api/billing/create-portal-session", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -105,10 +105,10 @@ export default function BillingPage() {
         const { url } = await response.json();
         window.location.href = url;
       } else {
-        console.error('Failed to create portal session');
+        console.error("Failed to create portal session");
       }
     } catch (error) {
-      console.error('Error creating portal session:', error);
+      console.error("Error creating portal session:", error);
     } finally {
       setPortalLoading(false);
     }
@@ -116,30 +116,50 @@ export default function BillingPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
-      case 'canceled':
-        return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" />Canceled</Badge>;
-      case 'past_due':
-        return <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" />Past Due</Badge>;
-      case 'trialing':
-        return <Badge className="bg-blue-100 text-blue-800"><Clock className="h-3 w-3 mr-1" />Trial</Badge>;
+      case "active":
+        return (
+          <Badge className="bg-green-100 text-green-800">
+            <CheckCircle className="mr-1 h-3 w-3" />
+            Active
+          </Badge>
+        );
+      case "canceled":
+        return (
+          <Badge variant="destructive">
+            <AlertCircle className="mr-1 h-3 w-3" />
+            Canceled
+          </Badge>
+        );
+      case "past_due":
+        return (
+          <Badge variant="destructive">
+            <AlertCircle className="mr-1 h-3 w-3" />
+            Past Due
+          </Badge>
+        );
+      case "trialing":
+        return (
+          <Badge className="bg-blue-100 text-blue-800">
+            <Clock className="mr-1 h-3 w-3" />
+            Trial
+          </Badge>
+        );
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currency.toUpperCase(),
     }).format(amount / 100);
   };
@@ -152,7 +172,7 @@ export default function BillingPage() {
           <h1 className="text-3xl font-bold">Billing</h1>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
       </div>
     );
@@ -183,33 +203,27 @@ export default function BillingPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Current Period</span>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-muted-foreground text-sm">
                     {formatDate(subscription.currentPeriodStart)} - {formatDate(subscription.currentPeriodEnd)}
                   </span>
                 </div>
                 {subscription.cancelAt && (
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Cancels At</span>
-                    <span className="text-sm text-muted-foreground">
-                      {formatDate(subscription.cancelAt)}
-                    </span>
+                    <span className="text-muted-foreground text-sm">{formatDate(subscription.cancelAt)}</span>
                   </div>
                 )}
               </div>
               <div className="flex items-end">
-                <Button 
-                  onClick={handleManageBilling} 
-                  disabled={portalLoading}
-                  className="w-full"
-                >
+                <Button onClick={handleManageBilling} disabled={portalLoading} className="w-full">
                   {portalLoading ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
                       Loading...
                     </>
                   ) : (
                     <>
-                      <ExternalLink className="h-4 w-4 mr-2" />
+                      <ExternalLink className="mr-2 h-4 w-4" />
                       Manage Billing
                     </>
                   )}
@@ -219,9 +233,7 @@ export default function BillingPage() {
           ) : (
             <Alert>
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                No active subscription found. You're currently on the free plan.
-              </AlertDescription>
+              <AlertDescription>No active subscription found. You're currently on the free plan.</AlertDescription>
             </Alert>
           )}
         </CardContent>
@@ -239,14 +251,14 @@ export default function BillingPage() {
           {paymentMethods.length > 0 ? (
             <div className="space-y-3">
               {paymentMethods.map((pm) => (
-                <div key={pm.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={pm.id} className="flex items-center justify-between rounded-lg border p-3">
                   <div className="flex items-center gap-3">
-                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    <CreditCard className="text-muted-foreground h-5 w-5" />
                     <div>
                       <div className="font-medium">
                         {pm.card?.brand.toUpperCase()} •••• {pm.card?.last4}
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-muted-foreground text-sm">
                         Expires {pm.card?.expMonth}/{pm.card?.expYear}
                       </div>
                     </div>
@@ -256,9 +268,9 @@ export default function BillingPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-6">
-              <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground">No payment methods on file</p>
+            <div className="py-6 text-center">
+              <CreditCard className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+              <p className="text-muted-foreground text-sm">No payment methods on file</p>
             </div>
           )}
         </CardContent>
@@ -276,25 +288,19 @@ export default function BillingPage() {
           {invoices.length > 0 ? (
             <div className="space-y-3">
               {invoices.map((invoice) => (
-                <div key={invoice.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={invoice.id} className="flex items-center justify-between rounded-lg border p-3">
                   <div className="flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-muted-foreground" />
+                    <Calendar className="text-muted-foreground h-5 w-5" />
                     <div>
-                      <div className="font-medium">
-                        {formatCurrency(invoice.amount, invoice.currency)}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatDate(invoice.created)}
-                      </div>
+                      <div className="font-medium">{formatCurrency(invoice.amount, invoice.currency)}</div>
+                      <div className="text-muted-foreground text-sm">{formatDate(invoice.created)}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={invoice.status === 'paid' ? 'default' : 'secondary'}>
-                      {invoice.status}
-                    </Badge>
+                    <Badge variant={invoice.status === "paid" ? "default" : "secondary"}>{invoice.status}</Badge>
                     {invoice.invoicePdf && (
                       <Button size="sm" variant="outline">
-                        <Download className="h-4 w-4 mr-1" />
+                        <Download className="mr-1 h-4 w-4" />
                         PDF
                       </Button>
                     )}
@@ -303,9 +309,9 @@ export default function BillingPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-6">
-              <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground">No billing history available</p>
+            <div className="py-6 text-center">
+              <DollarSign className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
+              <p className="text-muted-foreground text-sm">No billing history available</p>
             </div>
           )}
         </CardContent>
@@ -320,21 +326,21 @@ export default function BillingPage() {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
               <div className="text-2xl font-bold">4,999</div>
-              <div className="text-sm text-muted-foreground">Credits Remaining</div>
+              <div className="text-muted-foreground text-sm">Credits Remaining</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold">1</div>
-              <div className="text-sm text-muted-foreground">Credits Used</div>
+              <div className="text-muted-foreground text-sm">Credits Used</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold">5,000</div>
-              <div className="text-sm text-muted-foreground">Total Credits</div>
+              <div className="text-muted-foreground text-sm">Total Credits</div>
             </div>
           </div>
           <Separator className="my-4" />
           <div className="text-center">
-            <Button variant="outline" onClick={() => window.location.href = '/dashboard/topup'}>
-              <CreditCard className="h-4 w-4 mr-2" />
+            <Button variant="outline" onClick={() => (window.location.href = "/dashboard/topup")}>
+              <CreditCard className="mr-2 h-4 w-4" />
               Add More Credits
             </Button>
           </div>

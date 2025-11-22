@@ -1,9 +1,11 @@
 # MillionVerifier Dashboard Backend Setup Guide
 
 ## Overview
+
 This guide will help you set up the backend for the MillionVerifier Dashboard, which integrates with the MillionVerifier API to provide email verification services.
 
 ## Prerequisites
+
 - Node.js 18+ installed
 - PostgreSQL database
 - MillionVerifier API account
@@ -13,6 +15,7 @@ This guide will help you set up the backend for the MillionVerifier Dashboard, w
 ## Environment Setup
 
 ### 1. Create Environment File
+
 Create a `.env` file in the root directory with the following variables:
 
 ```env
@@ -36,6 +39,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ### 2. Database Setup
+
 1. Create a PostgreSQL database
 2. Update the `DATABASE_URL` in your `.env` file
 3. Run database migrations:
@@ -47,14 +51,17 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## API Endpoints
 
 ### Authentication Required
+
 All API endpoints require Clerk authentication. The user must be logged in to access these endpoints.
 
 ### Single Email Verification
+
 - **POST** `/api/verification/single`
 - **Body**: `{ "email": "test@example.com", "timeout": 20 }`
 - **Response**: MillionVerifier API response with verification results
 
 ### Bulk Email Verification
+
 - **POST** `/api/verification/bulk/upload`
 - **Body**: FormData with CSV file
 - **Response**: Upload result with file ID
@@ -78,10 +85,12 @@ All API endpoints require Clerk authentication. The user must be logged in to ac
 - **Response**: Success confirmation
 
 ### Credits Management
+
 - **GET** `/api/credits/balance`
 - **Response**: Current credit balance from MillionVerifier
 
 ### Verification History
+
 - **GET** `/api/verification/history`
 - **Query**: Optional filters (page, limit, email, result, quality, dateFrom, dateTo)
 - **Response**: Paginated verification history with statistics
@@ -89,16 +98,19 @@ All API endpoints require Clerk authentication. The user must be logged in to ac
 ## Database Schema
 
 ### New Tables Added
+
 1. **VerificationHistory** - Stores individual email verification results
 2. **BulkJob** - Tracks bulk verification jobs
 3. **CreditTransaction** - Records credit usage and purchases
 
 ### Updated Tables
+
 1. **User** - Standard user fields (no API key storage needed)
 
 ## Error Handling
 
 The API includes comprehensive error handling:
+
 - **400** - Bad Request (validation errors, missing parameters)
 - **401** - Unauthorized (not logged in)
 - **402** - Payment Required (insufficient credits)
@@ -108,7 +120,9 @@ The API includes comprehensive error handling:
 ## Testing
 
 ### Test API Keys
+
 MillionVerifier provides test API keys for development:
+
 - `API_KEY_FOR_TEST` - Returns random results
 - `API_KEY_FOR_OK` - Always returns "ok" result
 - `API_KEY_FOR_INVALID` - Always returns "invalid" result
@@ -117,30 +131,33 @@ MillionVerifier provides test API keys for development:
 ### Example Usage
 
 #### Single Verification
+
 ```javascript
-const response = await fetch('/api/verification/single', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email: 'test@example.com' })
+const response = await fetch("/api/verification/single", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "test@example.com" }),
 });
 const result = await response.json();
 ```
 
 #### Bulk Upload
+
 ```javascript
 const formData = new FormData();
-formData.append('file', csvFile);
+formData.append("file", csvFile);
 
-const response = await fetch('/api/verification/bulk/upload', {
-  method: 'POST',
-  body: formData
+const response = await fetch("/api/verification/bulk/upload", {
+  method: "POST",
+  body: formData,
 });
 const result = await response.json();
 ```
 
 #### Get Credits
+
 ```javascript
-const response = await fetch('/api/credits/balance');
+const response = await fetch("/api/credits/balance");
 const credits = await response.json();
 ```
 
@@ -162,17 +179,20 @@ const credits = await response.json();
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Database Connection**: Check DATABASE_URL format
 2. **API Key Issues**: Verify MILLION_VERIFIER_API_KEY is set correctly
 3. **File Upload**: Ensure CSV files are properly formatted
 4. **Authentication**: Check Clerk configuration
 
 ### Debug Mode
+
 Set `NODE_ENV=development` to enable detailed error messages.
 
 ## Support
 
 For issues related to:
+
 - MillionVerifier API: Contact MillionVerifier support
 - Clerk Authentication: Check Clerk documentation
 - Database Issues: Check Prisma documentation

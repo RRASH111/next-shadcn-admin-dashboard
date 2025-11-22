@@ -16,7 +16,7 @@ const getStatusIcon = (status: string) => {
     case "Completed":
       return <CheckCircle2 className="h-4 w-4 text-green-500" />;
     case "Processing":
-      return <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
     case "Failed":
       return <XCircle className="h-4 w-4 text-red-500" />;
     default:
@@ -41,18 +41,15 @@ export function BulkJobsList() {
   return (
     <div className="space-y-3">
       {bulkJobsData.map((job) => (
-        <div
-          key={job.id}
-          className="rounded-lg border p-4 space-y-3 hover:bg-accent/50 transition-colors"
-        >
+        <div key={job.id} className="hover:bg-accent/50 space-y-3 rounded-lg border p-4 transition-colors">
           <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3 flex-1">
-              <div className="rounded-lg bg-primary/10 p-2">
-                <FileText className="h-5 w-5 text-primary" />
+            <div className="flex flex-1 items-start gap-3">
+              <div className="bg-primary/10 rounded-lg p-2">
+                <FileText className="text-primary h-5 w-5" />
               </div>
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-sm">{job.fileName}</h4>
+                  <h4 className="text-sm font-medium">{job.fileName}</h4>
                   <Badge className={getStatusBadge(job.status)}>
                     <span className="flex items-center gap-1">
                       {getStatusIcon(job.status)}
@@ -60,7 +57,7 @@ export function BulkJobsList() {
                     </span>
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {job.totalEmails} emails • Created {job.createdAt}
                 </p>
               </div>
@@ -99,7 +96,7 @@ export function BulkJobsList() {
           {job.status === "Processing" && (
             <div className="space-y-2">
               <Progress value={(job.processedEmails / job.totalEmails) * 100} className="h-2" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Processing {job.processedEmails} of {job.totalEmails} emails...
               </p>
             </div>

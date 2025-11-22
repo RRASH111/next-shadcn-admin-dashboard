@@ -3,30 +3,29 @@
 
 const testAddCredits = async () => {
   try {
-    console.log('🧪 Testing credit addition...');
-    
+    console.log("🧪 Testing credit addition...");
+
     // Test adding credits
-    const response = await fetch('http://localhost:3000/api/test/add-credits', {
-      method: 'POST',
+    const response = await fetch("http://localhost:3000/api/test/add-credits", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userId: 'test-user-id', // Replace with your actual user ID
-        credits: '10000'
-      })
+        userId: "test-user-id", // Replace with your actual user ID
+        credits: "10000",
+      }),
     });
-    
+
     const result = await response.json();
-    console.log('✅ Credit addition result:', result);
-    
+    console.log("✅ Credit addition result:", result);
+
     // Check balance
-    const balanceResponse = await fetch('http://localhost:3000/api/credits/balance');
+    const balanceResponse = await fetch("http://localhost:3000/api/credits/balance");
     const balance = await balanceResponse.json();
-    console.log('💰 Current balance:', balance);
-    
+    console.log("💰 Current balance:", balance);
   } catch (error) {
-    console.error('❌ Error:', error);
+    console.error("❌ Error:", error);
   }
 };
 

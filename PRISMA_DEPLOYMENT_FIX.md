@@ -3,6 +3,7 @@
 ## Problem Summary
 
 The application was experiencing internal server errors (500) on Vercel deployment with the error:
+
 ```
 prisma:error Invalid 'prisma.user.findUnique()' invocation:
 Prisma Client could not locate the Query Engine for runtime "rhel-openssl-3.0.x"
@@ -18,11 +19,13 @@ Prisma Client could not locate the Query Engine for runtime "rhel-openssl-3.0.x"
 ## Solution Implemented
 
 ### 1. Downgraded Prisma Version
+
 - **From**: Prisma 6.18.0
 - **To**: Prisma 5.7.1
 - **Reason**: More stable binary target handling and better compatibility with Vercel
 
 ### 2. Updated `prisma/schema.prisma`
+
 ```prisma
 generator client {
   provider        = "prisma-client-js"
@@ -32,6 +35,7 @@ generator client {
 ```
 
 ### 3. Updated `package.json` Scripts
+
 ```json
 {
   "scripts": {
@@ -42,6 +46,7 @@ generator client {
 ```
 
 ### 4. Updated `vercel.json`
+
 ```json
 {
   "buildCommand": "npx prisma generate && next build",
@@ -58,6 +63,7 @@ generator client {
 ```
 
 ### 5. Fixed TypeScript Errors
+
 - Added explicit type annotations for reduce functions in API routes
 - Fixed implicit `any` type errors in:
   - `src/app/api/credits/balance/route.ts`
@@ -65,6 +71,7 @@ generator client {
   - `src/app/api/verification/single/route.ts`
 
 ### 6. Removed Custom Prisma Config
+
 - Deleted `prisma.config.ts` as it was incompatible with Prisma 5.7.1
 - This file was causing build failures and is not needed for the standard configuration
 
@@ -78,6 +85,7 @@ generator client {
 ## Deployment Instructions
 
 1. **Commit all changes**:
+
    ```bash
    git add .
    git commit -m "fix: Resolve Prisma Query Engine deployment issues"
@@ -99,6 +107,7 @@ generator client {
 ## Key Changes Made
 
 ### Files Modified:
+
 - ✅ `prisma/schema.prisma` - Updated generator configuration
 - ✅ `package.json` - Updated Prisma version and build scripts
 - ✅ `vercel.json` - Updated build configuration
@@ -108,6 +117,7 @@ generator client {
 - ❌ `prisma.config.ts` - **DELETED** (incompatible with Prisma 5.7.1)
 
 ### Packages Updated:
+
 - `prisma`: 6.18.0 → 5.7.1
 - `@prisma/client`: 6.18.0 → 5.7.1
 
@@ -140,11 +150,11 @@ If you still encounter issues:
 ✅ No "Query Engine not found" errors in production  
 ✅ All API endpoints respond with 200 status  
 ✅ Database queries execute successfully  
-✅ Build completes in under 3 minutes  
+✅ Build completes in under 3 minutes
 
 ## Contact
 
 If issues persist, check:
+
 - [Prisma Deployment Docs](https://www.prisma.io/docs/guides/deployment/deploying-to-vercel)
 - [Vercel Support](https://vercel.com/support)
-

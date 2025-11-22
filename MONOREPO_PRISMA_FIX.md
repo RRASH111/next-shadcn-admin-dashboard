@@ -1,7 +1,9 @@
 # Prisma Query Engine Fix for Next.js Monorepo on Vercel
 
 ## Problem
+
 You were encountering the following error when deploying to Vercel:
+
 ```
 prisma:error Invalid `prisma.user.findUnique()` invocation:
 Prisma Client could not locate the Query Engine for runtime "rhel-openssl-3.0.x"
@@ -12,6 +14,7 @@ Prisma Client could not locate the Query Engine for runtime "rhel-openssl-3.0.x"
 ### 1. Enhanced Binary Targets Configuration ✅
 
 **Updated `prisma/schema.prisma`:**
+
 ```prisma
 generator client {
   provider        = "prisma-client-js"
@@ -21,6 +24,7 @@ generator client {
 ```
 
 **Why this is necessary:**
+
 - `rhel-openssl-3.0.x`: Required for Vercel's deployment environment (Red Hat Enterprise Linux)
 - `linux-musl-openssl-3.0.x`: Alternative Linux distribution support
 - `debian-openssl-3.0.x`: Debian-based systems support
@@ -35,8 +39,9 @@ npm install @prisma/nextjs-monorepo-workaround-plugin
 ```
 
 **Updated `next.config.mjs`:**
+
 ```javascript
-import { PrismaPlugin } from '@prisma/nextjs-monorepo-workaround-plugin';
+import { PrismaPlugin } from "@prisma/nextjs-monorepo-workaround-plugin";
 
 const nextConfig = {
   // ... other config
@@ -48,10 +53,11 @@ const nextConfig = {
     return config;
   },
   // ... rest of config
-}
+};
 ```
 
 **Why this is necessary for monorepos:**
+
 - Ensures Prisma binaries are properly included in the server bundle
 - Handles the complex module resolution in monorepo structures
 - Prevents Vercel from stripping out necessary Prisma engine files
@@ -60,6 +66,7 @@ const nextConfig = {
 ### 3. Enhanced Vercel Configuration ✅
 
 **Updated `vercel.json`:**
+
 ```json
 {
   "buildCommand": "npx prisma generate && next build",
@@ -77,6 +84,7 @@ const nextConfig = {
 ```
 
 **Key changes:**
+
 - `PRISMA_GENERATE_DATAPROXY: "false"`: Uses traditional Prisma client (not Data Proxy)
 - `PRISMA_BINARY_TARGETS`: Explicitly sets binary targets via environment variable
 - Ensures Prisma generation happens during both install and build phases
@@ -84,18 +92,22 @@ const nextConfig = {
 ## Why These Changes Are Necessary
 
 ### 1. **Binary Target Mismatch**
+
 - **Problem**: Vercel runs on Linux (`rhel-openssl-3.0.x`) but your local development is on Windows (`native`)
 - **Solution**: Include multiple binary targets so Prisma can find the correct engine for each environment
 
 ### 2. **Monorepo Complexity**
+
 - **Problem**: Next.js monorepos have complex module resolution that can cause Prisma binaries to be excluded
 - **Solution**: The `@prisma/nextjs-monorepo-workaround-plugin` ensures binaries are properly bundled
 
 ### 3. **Vercel Build Process**
+
 - **Problem**: Vercel's aggressive optimization can strip out Prisma engine files
 - **Solution**: Explicit build commands and environment variables ensure proper Prisma setup
 
 ### 4. **Next.js 16 Turbopack Compatibility**
+
 - **Problem**: Next.js 16 uses Turbopack by default, which conflicts with webpack configurations
 - **Solution**: Configure both Turbopack and webpack to work together
 
@@ -104,6 +116,7 @@ const nextConfig = {
 ### For Next.js Monorepos Specifically:
 
 1. **Package.json Scripts:**
+
 ```json
 {
   "scripts": {
@@ -114,11 +127,13 @@ const nextConfig = {
 ```
 
 2. **Environment Variables on Vercel:**
+
 - `DATABASE_URL`: Your PostgreSQL connection string
 - `PRISMA_BINARY_TARGETS`: `rhel-openssl-3.0.x,linux-musl-openssl-3.0.x,debian-openssl-3.0.x`
 
 3. **Consider Prisma Accelerate** (Optional):
-For high-traffic applications, consider using Prisma Accelerate for connection pooling:
+   For high-traffic applications, consider using Prisma Accelerate for connection pooling:
+
 ```bash
 npm install @prisma/extension-accelerate
 ```
@@ -157,6 +172,7 @@ If issues persist:
 ## Summary
 
 This comprehensive solution addresses the Prisma Query Engine issue by:
+
 1. **Ensuring proper binary targets** for Vercel's Linux environment
 2. **Using the monorepo workaround plugin** to handle complex module resolution
 3. **Configuring Vercel properly** with explicit build commands and environment variables

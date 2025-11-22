@@ -59,10 +59,10 @@ export default function Page() {
     setVerificationResult(null);
 
     try {
-      const response = await fetch('/api/verification/single', {
-        method: 'POST',
+      const response = await fetch("/api/verification/single", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email: email.trim() }),
       });
@@ -73,10 +73,10 @@ export default function Page() {
         setVerificationResult(result);
         setEmail(""); // Clear the input after successful verification
       } else {
-        setError(result.error || 'Verification failed');
+        setError(result.error || "Verification failed");
       }
     } catch (error) {
-      setError('Network error. Please try again.');
+      setError("Network error. Please try again.");
     } finally {
       setIsVerifying(false);
     }
@@ -90,27 +90,27 @@ export default function Page() {
 
   const fetchBulkJobs = async () => {
     try {
-      const response = await fetch('/api/verification/bulk/list');
+      const response = await fetch("/api/verification/bulk/list");
       if (response.ok) {
         const data = await response.json();
         // Convert MillionVerifier format to our local format
-        const jobs: BulkJob[] = data.files?.map((file: any) => ({
-          fileName: file.file_name,
-          status: file.status === 'finished' ? 'completed' : 
-                  file.status === 'canceled' ? 'stopped' : 'processing',
-          totalEmails: file.total_rows,
-          processedEmails: file.verified,
-          validEmails: file.ok,
-          riskyEmails: file.catch_all,
-          invalidEmails: file.invalid + file.disposable + file.unknown,
-          timestamp: new Date().toLocaleString(), // You might want to get actual timestamp from API
-          reportId: file.file_id,
-        })) || [];
-        
+        const jobs: BulkJob[] =
+          data.files?.map((file: any) => ({
+            fileName: file.file_name,
+            status: file.status === "finished" ? "completed" : file.status === "canceled" ? "stopped" : "processing",
+            totalEmails: file.total_rows,
+            processedEmails: file.verified,
+            validEmails: file.ok,
+            riskyEmails: file.catch_all,
+            invalidEmails: file.invalid + file.disposable + file.unknown,
+            timestamp: new Date().toLocaleString(), // You might want to get actual timestamp from API
+            reportId: file.file_id,
+          })) || [];
+
         setBulkJobs(jobs);
       }
     } catch (error) {
-      console.error('Error fetching bulk jobs:', error);
+      console.error("Error fetching bulk jobs:", error);
     }
   };
 
@@ -126,8 +126,8 @@ export default function Page() {
     }
 
     // Only start polling if there are processing jobs
-    const hasProcessingJobs = bulkJobs.some(job => job.status === 'processing');
-    
+    const hasProcessingJobs = bulkJobs.some((job) => job.status === "processing");
+
     if (hasProcessingJobs) {
       // Start polling every 10 seconds
       pollingIntervalRef.current = setInterval(() => {
@@ -142,17 +142,17 @@ export default function Page() {
         pollingIntervalRef.current = null;
       }
     };
-  }, [bulkJobs.filter(job => job.status === 'processing').length]); // Only depend on count of processing jobs
+  }, [bulkJobs.filter((job) => job.status === "processing").length]); // Only depend on count of processing jobs
 
   const handleStopJob = async (fileName: string) => {
-    const job = bulkJobs.find(j => j.fileName === fileName);
+    const job = bulkJobs.find((j) => j.fileName === fileName);
     if (!job) return;
 
     try {
-      const response = await fetch('/api/verification/bulk/stop', {
-        method: 'POST',
+      const response = await fetch("/api/verification/bulk/stop", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ fileId: job.reportId }),
       });
@@ -160,29 +160,25 @@ export default function Page() {
       if (response.ok) {
         // Update the job status to stopped
         setBulkJobs((jobs) =>
-          jobs.map((job) =>
-            job.fileName === fileName
-              ? { ...job, status: 'stopped' as const }
-              : job
-          )
+          jobs.map((job) => (job.fileName === fileName ? { ...job, status: "stopped" as const } : job)),
         );
       } else {
-        console.error('Failed to stop job');
+        console.error("Failed to stop job");
       }
     } catch (error) {
-      console.error('Error stopping job:', error);
+      console.error("Error stopping job:", error);
     }
   };
 
   const handleDeleteJob = async (fileName: string) => {
-    const job = bulkJobs.find(j => j.fileName === fileName);
+    const job = bulkJobs.find((j) => j.fileName === fileName);
     if (!job) return;
 
     try {
-      const response = await fetch('/api/verification/bulk/delete', {
-        method: 'DELETE',
+      const response = await fetch("/api/verification/bulk/delete", {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ fileId: job.reportId }),
       });
@@ -190,54 +186,64 @@ export default function Page() {
       if (response.ok) {
         setBulkJobs((jobs) => jobs.filter((job) => job.fileName !== fileName));
       } else {
-        console.error('Failed to delete job');
+        console.error("Failed to delete job");
       }
     } catch (error) {
-      console.error('Error deleting job:', error);
+      console.error("Error deleting job:", error);
     }
   };
 
-  const handleDownloadReport = async (fileName: string, filter: 'all' | 'ok' | 'ok_and_catch_all' | 'invalid' | 'disposable' | 'unknown' = 'all') => {
+  const handleDownloadReport = async (
+    fileName: string,
+    filter: "all" | "ok" | "ok_and_catch_all" | "invalid" | "disposable" | "unknown" = "all",
+  ) => {
     const job = bulkJobs.find((j) => j.fileName === fileName);
     if (!job) return;
 
     try {
       const response = await fetch(`/api/verification/bulk/download?fileId=${job.reportId}&filter=${filter}`);
-      
+
       if (response.ok) {
         // Create a blob from the response
         const blob = await response.blob();
-        
+
         // Create a download link
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        
+
         // Generate filename based on filter
-        const filterName = filter === 'all' ? 'all_results' : filter;
-        a.download = `${fileName.replace('.csv', '')}_${filterName}.csv`;
-        
+        const filterName = filter === "all" ? "all_results" : filter;
+        a.download = `${fileName.replace(".csv", "")}_${filterName}.csv`;
+
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } else {
-        console.error('Failed to download report');
+        console.error("Failed to download report");
       }
     } catch (error) {
-      console.error('Error downloading report:', error);
+      console.error("Error downloading report:", error);
     }
   };
 
   const getResultColor = (result: string) => {
     switch (result) {
-      case 'ok': return 'text-green-600 bg-green-50 border-green-200';
-      case 'invalid': return 'text-red-600 bg-red-50 border-red-200';
-      case 'catch_all': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'unknown': return 'text-gray-600 bg-gray-50 border-gray-200';
-      case 'disposable': return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'error': return 'text-red-600 bg-red-50 border-red-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case "ok":
+        return "text-green-600 bg-green-50 border-green-200";
+      case "invalid":
+        return "text-red-600 bg-red-50 border-red-200";
+      case "catch_all":
+        return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      case "unknown":
+        return "text-gray-600 bg-gray-50 border-gray-200";
+      case "disposable":
+        return "text-orange-600 bg-orange-50 border-orange-200";
+      case "error":
+        return "text-red-600 bg-red-50 border-red-200";
+      default:
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
@@ -246,17 +252,17 @@ export default function Page() {
       {/* Email Verification Forms */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Single Email Verification */}
-        <Card className="flex flex-col h-full">
+        <Card className="flex h-full flex-col">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Mail className="h-5 w-5" />
               <h2 className="text-xl font-semibold">Single Email Verification</h2>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-sm">
               Instant verification with comprehensive detailed results and insights.
             </p>
           </CardHeader>
-          <CardContent className="space-y-4 flex-1 flex flex-col">
+          <CardContent className="flex flex-1 flex-col space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input
@@ -270,7 +276,7 @@ export default function Page() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Verification Cost</span>
+              <span className="text-muted-foreground text-sm">Verification Cost</span>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
                   Instant Results
@@ -279,18 +285,18 @@ export default function Page() {
               </div>
             </div>
             <Button
-              className="w-full mt-auto"
+              className="mt-auto w-full"
               onClick={handleEmailVerification}
               disabled={isVerifying || !email.trim()}
             >
               {isVerifying ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Verifying...
                 </>
               ) : (
                 <>
-                  <Mail className="h-4 w-4 mr-2" />
+                  <Mail className="mr-2 h-4 w-4" />
                   Verify Email
                 </>
               )}
@@ -311,49 +317,47 @@ export default function Page() {
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                <Label className="text-muted-foreground text-sm font-medium">Email</Label>
                 <p className="font-mono text-sm">{verificationResult.email}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Result</Label>
+                <Label className="text-muted-foreground text-sm font-medium">Result</Label>
                 <Badge className={`${getResultColor(verificationResult.result)} capitalize`}>
                   {verificationResult.result}
                 </Badge>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Quality</Label>
-                <p className="capitalize">{verificationResult.quality || 'N/A'}</p>
+                <Label className="text-muted-foreground text-sm font-medium">Quality</Label>
+                <p className="capitalize">{verificationResult.quality || "N/A"}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Free Email</Label>
-                <p>{verificationResult.free ? 'Yes' : 'No'}</p>
+                <Label className="text-muted-foreground text-sm font-medium">Free Email</Label>
+                <p>{verificationResult.free ? "Yes" : "No"}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Role Email</Label>
-                <p>{verificationResult.role ? 'Yes' : 'No'}</p>
+                <Label className="text-muted-foreground text-sm font-medium">Role Email</Label>
+                <p>{verificationResult.role ? "Yes" : "No"}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Execution Time</Label>
+                <Label className="text-muted-foreground text-sm font-medium">Execution Time</Label>
                 <p>{verificationResult.executiontime}ms</p>
               </div>
             </div>
             {verificationResult.didyoumean && (
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Did you mean?</Label>
+                <Label className="text-muted-foreground text-sm font-medium">Did you mean?</Label>
                 <p className="font-mono text-sm">{verificationResult.didyoumean}</p>
               </div>
             )}
             {verificationResult.subresult && (
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Subresult</Label>
+                <Label className="text-muted-foreground text-sm font-medium">Subresult</Label>
                 <p className="text-sm">{verificationResult.subresult}</p>
               </div>
             )}
             {verificationResult.error && (
               <Alert className="border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">
-                  {verificationResult.error}
-                </AlertDescription>
+                <AlertDescription className="text-red-800">{verificationResult.error}</AlertDescription>
               </Alert>
             )}
           </CardContent>
@@ -363,9 +367,7 @@ export default function Page() {
       {/* Error Message */}
       {error && (
         <Alert className="border-red-200 bg-red-50">
-          <AlertDescription className="text-red-800">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
         </Alert>
       )}
 
@@ -394,22 +396,22 @@ export default function Page() {
                       <Mail className="h-6 w-6 text-gray-500" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="mb-1 flex items-center gap-2">
                         <h3 className="font-semibold">{job.fileName}</h3>
                         <Badge className="bg-gray-500/10 text-gray-500">Stopped</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-muted-foreground mb-2 text-sm">
                         {job.totalEmails} emails • Stopped {job.timestamp}
                       </p>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="h-2 w-full rounded-full bg-gray-200">
                         <div
-                          className="bg-gray-400 h-2 rounded-full transition-all duration-500"
+                          className="h-2 rounded-full bg-gray-400 transition-all duration-500"
                           style={{
                             width: `${(job.processedEmails / job.totalEmails) * 100}%`,
                           }}
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="text-muted-foreground mt-2 text-xs">
                         Processed {job.processedEmails} of {job.totalEmails} emails before stopping
                       </p>
                     </div>
@@ -418,10 +420,15 @@ export default function Page() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleDeleteJob(job.fileName)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       >
-                        <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
                         </svg>
                         Delete
                       </Button>
@@ -433,18 +440,18 @@ export default function Page() {
               <Card key={job.fileName}>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
-                    <div className="rounded-lg bg-primary/10 p-3">
-                      <Mail className="h-6 w-6 text-primary" />
+                    <div className="bg-primary/10 rounded-lg p-3">
+                      <Mail className="text-primary h-6 w-6" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="mb-1 flex items-center gap-2">
                         <h3 className="font-semibold">{job.fileName}</h3>
                         <Badge className="bg-blue-500/10 text-blue-500">Processing</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-muted-foreground mb-2 text-sm">
                         {job.totalEmails} emails • Created {job.timestamp}
                       </p>
-                      <div className="w-full bg-secondary rounded-full h-2">
+                      <div className="bg-secondary h-2 w-full rounded-full">
                         <div
                           className="bg-primary h-2 rounded-full transition-all duration-500"
                           style={{
@@ -452,7 +459,7 @@ export default function Page() {
                           }}
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="text-muted-foreground mt-2 text-xs">
                         Processing {job.processedEmails} of {job.totalEmails} emails...
                       </p>
                     </div>
@@ -461,10 +468,10 @@ export default function Page() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleStopJob(job.fileName)}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-700"
                       >
-                        <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <rect x="6" y="6" width="12" height="12" rx="2" strokeWidth="2"/>
+                        <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <rect x="6" y="6" width="12" height="12" rx="2" strokeWidth="2" />
                         </svg>
                         Stop
                       </Button>
@@ -472,7 +479,7 @@ export default function Page() {
                   </div>
                 </CardContent>
               </Card>
-            )
+            ),
           )}
         </div>
       )}

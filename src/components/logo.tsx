@@ -20,12 +20,7 @@ export function Logo({ className = "", size = 24 }: LogoProps) {
 
   if (!mounted) {
     // Return a placeholder with the same dimensions during SSR
-    return (
-      <div 
-        className={`bg-muted animate-pulse rounded ${className}`}
-        style={{ width: size, height: size }}
-      />
-    );
+    return <div className={`bg-muted animate-pulse rounded ${className}`} style={{ width: size, height: size }} />;
   }
 
   // Determine which logo to use based on theme

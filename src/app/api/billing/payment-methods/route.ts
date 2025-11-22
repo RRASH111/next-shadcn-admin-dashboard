@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -14,7 +14,7 @@ export async function GET() {
     // Get user's organization
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { organization: true }
+      include: { organization: true },
     });
 
     if (!user?.organization?.stripeCustomerId) {
@@ -24,20 +24,22 @@ export async function GET() {
     // Get payment methods from Stripe
     const paymentMethods = await stripe.paymentMethods.list({
       customer: user.organization.stripeCustomerId,
-      type: 'card',
+      type: "card",
     });
 
     return NextResponse.json(
-      paymentMethods.data.map(pm => ({
+      paymentMethods.data.map((pm) => ({
         id: pm.id,
         type: pm.type,
-        card: pm.card ? {
-          brand: pm.card.brand,
-          last4: pm.card.last4,
-          expMonth: pm.card.exp_month,
-          expYear: pm.card.exp_year,
-        } : null,
-      }))
+        card: pm.card
+          ? {
+              brand: pm.card.brand,
+              last4: pm.card.last4,
+              expMonth: pm.card.exp_month,
+              expYear: pm.card.exp_year,
+            }
+          : null,
+      })),
     );
   } catch (error) {
     console.error("Error fetching payment methods:", error);

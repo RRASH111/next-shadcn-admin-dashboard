@@ -58,9 +58,7 @@ export const verificationColumns: ColumnDef<VerificationHistoryItem>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.original.email}</div>
-    ),
+    cell: ({ row }) => <div className="font-medium">{row.original.email}</div>,
   },
   {
     accessorKey: "result",
@@ -68,41 +66,31 @@ export const verificationColumns: ColumnDef<VerificationHistoryItem>[] = [
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         {getResultIcon(row.original.result)}
-        <Badge className={getResultBadge(row.original.result)}>
-          {row.original.result}
-        </Badge>
+        <Badge className={getResultBadge(row.original.result)}>{row.original.result}</Badge>
       </div>
     ),
   },
   {
     accessorKey: "quality",
     header: "Quality",
-    cell: ({ row }) => (
-      <span className="text-sm">{row.original.quality}</span>
-    ),
+    cell: ({ row }) => <span className="text-sm">{row.original.quality}</span>,
   },
   {
     accessorKey: "subresult",
     header: "Type",
-    cell: ({ row }) => (
-      <Badge variant="outline">{row.original.subresult || 'Unknown'}</Badge>
-    ),
+    cell: ({ row }) => <Badge variant="outline">{row.original.subresult || "Unknown"}</Badge>,
   },
   {
     accessorKey: "didyoumean",
     header: "Suggestion",
     cell: ({ row }) => (
-      <span className="text-sm text-muted-foreground">
-        {row.original.didyoumean || 'No suggestion'}
-      </span>
+      <span className="text-muted-foreground text-sm">{row.original.didyoumean || "No suggestion"}</span>
     ),
   },
   {
     accessorKey: "createdAt",
     header: "Date",
-    cell: ({ row }) => (
-      <span className="text-sm text-muted-foreground">{row.original.createdAt}</span>
-    ),
+    cell: ({ row }) => <span className="text-muted-foreground text-sm">{row.original.createdAt}</span>,
   },
   {
     id: "actions",

@@ -34,15 +34,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const fetchCredits = async () => {
     try {
-      const response = await fetch('/api/credits/balance');
+      const response = await fetch("/api/credits/balance");
       if (response.ok) {
         const data = await response.json();
         setCredits(data);
       } else {
-        console.error('Failed to fetch credits');
+        console.error("Failed to fetch credits");
       }
     } catch (error) {
-      console.error('Error fetching credits:', error);
+      console.error("Error fetching credits:", error);
     } finally {
       setLoading(false);
     }
@@ -78,40 +78,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="flex flex-col">
         <NavMain items={sidebarItems} />
-        
+
         <div className="mt-auto px-2 py-4">
-          <div className="rounded-lg border bg-card p-3 shadow-sm">
-            <div className="flex items-center justify-between mb-2">
+          <div className="bg-card rounded-lg border p-3 shadow-sm">
+            <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
+                <CreditCard className="text-muted-foreground h-4 w-4" />
                 <span className="text-sm font-medium">Credits Balance</span>
               </div>
-              <button 
+              <button
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 onClick={handleRefresh}
                 disabled={refreshing}
               >
-                {refreshing ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="h-4 w-4" />
-                )}
+                {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               </button>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">Available for verification</p>
+            <p className="text-muted-foreground mb-3 text-xs">Available for verification</p>
             <div className="space-y-2">
               <div className="flex items-baseline gap-2">
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Loading...</span>
+                    <span className="text-muted-foreground text-sm">Loading...</span>
                   </div>
                 ) : (
                   <>
-                    <span className="text-3xl font-bold">
-                      {credits ? credits.credits.toLocaleString() : '0'}
-                    </span>
-                    <span className="text-xs text-muted-foreground">credits remaining</span>
+                    <span className="text-3xl font-bold">{credits ? credits.credits.toLocaleString() : "0"}</span>
+                    <span className="text-muted-foreground text-xs">credits remaining</span>
                   </>
                 )}
               </div>

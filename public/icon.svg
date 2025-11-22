@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="zenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#zenGradient)"/>
+  
+  <!-- Z letter with checkmark integration -->
+  <path d="M 30 30 L 70 30 L 70 35 L 38 65 L 70 65 L 70 70 L 30 70 L 30 65 L 62 35 L 30 35 Z" 
+        fill="white" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+  
+  <!-- Checkmark accent -->
+  <circle cx="72" cy="28" r="12" fill="white"/>
+  <path d="M 67 28 L 70 31 L 77 24" 
+        fill="none" stroke="url(#zenGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+

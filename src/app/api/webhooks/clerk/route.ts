@@ -66,7 +66,7 @@ export async function POST(req: Request) {
           organization: {
             create: {
               name: `${first_name || username || "User"}'s Organization`,
-              slug: `${username || id}-org`.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+              slug: `${username || id}-org`.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
             },
           },
         },

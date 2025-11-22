@@ -45,14 +45,14 @@ export default function Page() {
         setError(null);
 
         // Fetch credits
-        const creditsResponse = await fetch('/api/credits/balance');
+        const creditsResponse = await fetch("/api/credits/balance");
         if (creditsResponse.ok) {
           const creditsData = await creditsResponse.json();
           setCredits(creditsData);
         }
 
         // Fetch verification history stats
-        const historyResponse = await fetch('/api/verification/history?limit=1000');
+        const historyResponse = await fetch("/api/verification/history?limit=1000");
         if (historyResponse.ok) {
           const historyData = await historyResponse.json();
           const stats: VerificationStats = {
@@ -70,24 +70,21 @@ export default function Page() {
         }
 
         // Fetch bulk jobs stats
-        const bulkResponse = await fetch('/api/verification/bulk/list');
+        const bulkResponse = await fetch("/api/verification/bulk/list");
         if (bulkResponse.ok) {
           const bulkData = await bulkResponse.json();
           const stats: BulkJobStats = {
             total: bulkData.total || 0,
-            active: bulkData.files?.filter((job: any) => 
-              ['in_progress', 'in_queue_to_start', 'paused'].includes(job.status)
-            ).length || 0,
-            completed: bulkData.files?.filter((job: any) => 
-              job.status === 'finished'
-            ).length || 0,
+            active:
+              bulkData.files?.filter((job: any) => ["in_progress", "in_queue_to_start", "paused"].includes(job.status))
+                .length || 0,
+            completed: bulkData.files?.filter((job: any) => job.status === "finished").length || 0,
           };
           setBulkJobStats(stats);
         }
-
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        setError('Failed to load dashboard data');
+        console.error("Error fetching dashboard data:", error);
+        setError("Failed to load dashboard data");
       } finally {
         setLoading(false);
       }
@@ -125,9 +122,7 @@ export default function Page() {
 
       {error && (
         <Alert className="border-red-200 bg-red-50">
-          <AlertDescription className="text-red-800">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-red-800">{error}</AlertDescription>
         </Alert>
       )}
 
@@ -135,19 +130,17 @@ export default function Page() {
         {/* Available Credits Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
               Available Credits
             </span>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CreditCard className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold">
-              {credits ? credits.credits.toLocaleString() : '0'}
-            </div>
+            <div className="text-3xl font-bold">{credits ? credits.credits.toLocaleString() : "0"}</div>
             <div className="space-y-2">
-              <div className="text-xs text-muted-foreground">Used: {creditsUsed.toLocaleString()}</div>
+              <div className="text-muted-foreground text-xs">Used: {creditsUsed.toLocaleString()}</div>
               <Progress value={creditsProgress} className="h-1" />
-              <div className="text-xs text-muted-foreground text-right">Total: 5,000</div>
+              <div className="text-muted-foreground text-right text-xs">Total: 5,000</div>
             </div>
           </CardContent>
         </Card>
@@ -155,28 +148,28 @@ export default function Page() {
         {/* Email Verifications Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
               Email Verifications
             </span>
-            <Mail className="h-4 w-4 text-muted-foreground" />
+            <Mail className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="text-3xl font-bold">
-              {verificationStats ? verificationStats.total.toLocaleString() : '0'}
+              {verificationStats ? verificationStats.total.toLocaleString() : "0"}
             </div>
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="text-muted-foreground flex items-center gap-2 text-xs">
                 <div className="h-2 w-2 rounded-full bg-green-500" />
                 <span>{verificationStats?.valid || 0} valid</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="text-muted-foreground flex items-center gap-2 text-xs">
                 <div className="h-2 w-2 rounded-full bg-red-500" />
                 <span>{verificationStats?.invalid || 0} invalid</span>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-2">
+              <Button variant="outline" size="sm" className="mt-2 w-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-3 w-3 mr-1"
+                  className="mr-1 h-3 w-3"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -195,16 +188,12 @@ export default function Page() {
         {/* Bulk Jobs Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Bulk Jobs
-            </span>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">Bulk Jobs</span>
+            <FileText className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold">
-              {bulkJobStats ? bulkJobStats.total.toLocaleString() : '0'}
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="text-3xl font-bold">{bulkJobStats ? bulkJobStats.total.toLocaleString() : "0"}</div>
+            <div className="text-muted-foreground flex items-center justify-between text-xs">
               <span>Active: {bulkJobStats?.active || 0}</span>
               <span>Completed: {bulkJobStats?.completed || 0}</span>
             </div>
@@ -214,17 +203,13 @@ export default function Page() {
         {/* Credits Used Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Credits Used
-            </span>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">Credits Used</span>
+            <TrendingUp className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="text-3xl font-bold">{creditsUsed.toLocaleString()}</div>
             <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">
-                Total credits consumed across all verifications
-              </p>
+              <p className="text-muted-foreground text-xs">Total credits consumed across all verifications</p>
               <Button variant="outline" size="sm" className="w-full">
                 This Period
               </Button>
@@ -242,7 +227,7 @@ export default function Page() {
               <Mail className="h-5 w-5" />
               <h2 className="text-xl font-semibold">Single Email Verification</h2>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-sm">
               Instant verification with comprehensive detailed results and insights.
             </p>
           </CardHeader>
@@ -252,11 +237,11 @@ export default function Page() {
               <input
                 type="email"
                 placeholder="example@domain.com"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Verification Cost</span>
+              <span className="text-muted-foreground text-sm">Verification Cost</span>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
                   Instant Results
@@ -265,7 +250,7 @@ export default function Page() {
               </div>
             </div>
             <Button className="w-full">
-              <Mail className="h-4 w-4 mr-2" />
+              <Mail className="mr-2 h-4 w-4" />
               Verify Email
             </Button>
           </CardContent>
@@ -278,7 +263,7 @@ export default function Page() {
               <FileText className="h-5 w-5" />
               <h2 className="text-xl font-semibold">Bulk Email Verification</h2>
             </div>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-sm">
               Process thousands of emails efficiently with batch processing.
             </p>
           </CardHeader>
@@ -288,14 +273,14 @@ export default function Page() {
               <input
                 type="file"
                 accept=".csv,.txt"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Supported formats: CSV, TXT (one email per line). Maximum file size: 10MB.
               </p>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Processing Cost</span>
+              <span className="text-muted-foreground text-sm">Processing Cost</span>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
                   Batch Processing
@@ -304,7 +289,7 @@ export default function Page() {
               </div>
             </div>
             <Button className="w-full" variant="outline">
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="mr-2 h-4 w-4" />
               Upload & Verify
             </Button>
           </CardContent>
@@ -320,9 +305,9 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-sm font-medium mb-1">No bulk verification jobs yet</p>
-              <p className="text-xs text-muted-foreground">Upload a CSV file to get started</p>
+              <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+              <p className="mb-1 text-sm font-medium">No bulk verification jobs yet</p>
+              <p className="text-muted-foreground text-xs">Upload a CSV file to get started</p>
             </div>
           </CardContent>
         </Card>
@@ -332,7 +317,7 @@ export default function Page() {
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold">Recent Email Verifications</h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-muted-foreground mt-1 text-sm">
                 Your latest email verification results with detailed insights
               </p>
             </div>
@@ -340,7 +325,7 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border">
-              <div className="grid grid-cols-7 gap-4 px-4 py-3 text-xs font-medium text-muted-foreground bg-muted/50">
+              <div className="text-muted-foreground bg-muted/50 grid grid-cols-7 gap-4 px-4 py-3 text-xs font-medium">
                 <div>Email</div>
                 <div>Result</div>
                 <div>Quality</div>
@@ -350,11 +335,11 @@ export default function Page() {
                 <div>Date</div>
               </div>
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="rounded-full bg-muted p-3 mb-4">
-                  <Mail className="h-6 w-6 text-muted-foreground" />
+                <div className="bg-muted mb-4 rounded-full p-3">
+                  <Mail className="text-muted-foreground h-6 w-6" />
                 </div>
-                <p className="text-sm font-medium mb-1">No verifications yet</p>
-                <p className="text-xs text-muted-foreground">Start by verifying your first email above</p>
+                <p className="mb-1 text-sm font-medium">No verifications yet</p>
+                <p className="text-muted-foreground text-xs">Start by verifying your first email above</p>
               </div>
             </div>
           </CardContent>

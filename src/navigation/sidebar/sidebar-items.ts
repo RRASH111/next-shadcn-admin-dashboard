@@ -1,10 +1,4 @@
-import {
-  Clock,
-  History,
-  FileText,
-  CreditCard,
-  type LucideIcon,
-} from "lucide-react";
+import { Clock, History, FileText, CreditCard, type LucideIcon } from "lucide-react";
 
 export interface NavSubItem {
   title: string;

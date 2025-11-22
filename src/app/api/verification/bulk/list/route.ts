@@ -1,34 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { prisma } from '@/lib/prisma';
-import { MillionVerifierAPI, APIError } from '@/lib/millionverifier';
-import { bulkJobFiltersSchema } from '@/lib/validation';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import { MillionVerifierAPI, APIError } from "@/lib/millionverifier";
+import { bulkJobFiltersSchema } from "@/lib/validation";
 
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const filters = Object.fromEntries(searchParams.entries());
-    
+
     // Convert string values to appropriate types
     const parsedFilters = {
       ...filters,
@@ -43,14 +40,14 @@ export async function GET(request: NextRequest) {
     // Get only this user's bulk jobs from the database
     const userBulkJobs = await prisma.bulkJob.findMany({
       where: { userId: user.id },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
 
     // If no jobs exist, return empty result
     if (userBulkJobs.length === 0) {
       return NextResponse.json({
         files: [],
-        total: 0
+        total: 0,
       });
     }
 
@@ -63,7 +60,7 @@ export async function GET(request: NextRequest) {
       try {
         // Get latest info from MillionVerifier
         const fileInfo = await api.getBulkFileInfo(bulkJob.fileId);
-        
+
         // Update local database
         await prisma.bulkJob.update({
           where: { id: bulkJob.id },
@@ -82,8 +79,8 @@ export async function GET(request: NextRequest) {
             credit: fileInfo.credit,
             estimatedTimeSec: fileInfo.estimated_time_sec,
             errorMessage: fileInfo.error || null,
-            updatedAt: new Date()
-          }
+            updatedAt: new Date(),
+          },
         });
 
         updatedFiles.push(fileInfo);
@@ -95,29 +92,19 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       files: updatedFiles,
-      total: updatedFiles.length
+      total: updatedFiles.length,
     });
-
   } catch (error) {
-    console.error('Bulk jobs list error:', error);
-    
+    console.error("Bulk jobs list error:", error);
+
     if (error instanceof APIError) {
-      return NextResponse.json(
-        { error: error.message, code: error.code },
-        { status: error.statusCode }
-      );
+      return NextResponse.json({ error: error.message, code: error.code }, { status: error.statusCode });
     }
-    
-    if (error instanceof Error && error.name === 'ZodError') {
-      return NextResponse.json(
-        { error: 'Invalid filter parameters', details: error.message },
-        { status: 400 }
-      );
+
+    if (error instanceof Error && error.name === "ZodError") {
+      return NextResponse.json({ error: "Invalid filter parameters", details: error.message }, { status: 400 });
     }
-    
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

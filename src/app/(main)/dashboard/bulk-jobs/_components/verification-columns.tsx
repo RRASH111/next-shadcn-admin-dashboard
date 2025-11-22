@@ -43,9 +43,7 @@ export const verificationColumns: ColumnDef<Verification>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.original.email}</div>
-    ),
+    cell: ({ row }) => <div className="font-medium">{row.original.email}</div>,
   },
   {
     accessorKey: "result",
@@ -53,39 +51,29 @@ export const verificationColumns: ColumnDef<Verification>[] = [
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         {getResultIcon(row.original.result)}
-        <Badge className={getResultBadge(row.original.result)}>
-          {row.original.result}
-        </Badge>
+        <Badge className={getResultBadge(row.original.result)}>{row.original.result}</Badge>
       </div>
     ),
   },
   {
     accessorKey: "quality",
     header: "Quality",
-    cell: ({ row }) => (
-      <span className="text-sm">{row.original.quality}</span>
-    ),
+    cell: ({ row }) => <span className="text-sm">{row.original.quality}</span>,
   },
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => (
-      <Badge variant="outline">{row.original.type}</Badge>
-    ),
+    cell: ({ row }) => <Badge variant="outline">{row.original.type}</Badge>,
   },
   {
     accessorKey: "suggestion",
     header: "Suggestion",
-    cell: ({ row }) => (
-      <span className="text-sm text-muted-foreground">{row.original.suggestion}</span>
-    ),
+    cell: ({ row }) => <span className="text-muted-foreground text-sm">{row.original.suggestion}</span>,
   },
   {
     accessorKey: "date",
     header: "Date",
-    cell: ({ row }) => (
-      <span className="text-sm text-muted-foreground">{row.original.date}</span>
-    ),
+    cell: ({ row }) => <span className="text-muted-foreground text-sm">{row.original.date}</span>,
   },
   {
     id: "actions",

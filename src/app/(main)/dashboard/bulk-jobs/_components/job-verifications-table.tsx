@@ -1,30 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  getPaginationRowModel,
-} from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel, flexRender, getPaginationRowModel } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { verificationColumns } from "./verification-columns";
 import { getJobVerifications } from "./job-verifications-data";
 
@@ -56,36 +38,29 @@ export function JobVerificationsTable({
   });
 
   const startIndex = table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1;
-  const endIndex = Math.min(
-    startIndex + table.getRowModel().rows.length - 1,
-    data.length
-  );
+  const endIndex = Math.min(startIndex + table.getRowModel().rows.length - 1, data.length);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={onBack}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Jobs
         </Button>
         <div>
           <h2 className="text-lg font-semibold">{jobFileName}</h2>
-          <p className="text-sm text-muted-foreground">
-            Showing {data.length} verifications
-          </p>
+          <p className="text-muted-foreground text-sm">Showing {data.length} verifications</p>
         </div>
       </div>
 
-      <div className="rounded-lg border overflow-hidden">
+      <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -96,9 +71,7 @@ export function JobVerificationsTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -115,7 +88,7 @@ export function JobVerificationsTable({
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">Rows per page</p>
+          <p className="text-muted-foreground text-sm">Rows per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -136,7 +109,7 @@ export function JobVerificationsTable({
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             {data.length > 0 ? (
               <>
                 Showing {startIndex} to {endIndex} of {data.length} results
@@ -165,7 +138,7 @@ export function JobVerificationsTable({
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
             </div>
             <Button

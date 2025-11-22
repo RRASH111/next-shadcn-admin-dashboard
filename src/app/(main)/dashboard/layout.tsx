@@ -28,12 +28,12 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
   }
 
   return (
-    <SidebarProvider defaultOpen={true} className="h-screen flex overflow-hidden">
+    <SidebarProvider defaultOpen={true} className="flex h-screen overflow-hidden">
       <AppSidebar variant="inset" collapsible="none" className="h-screen" />
       <SidebarInset
         data-content-layout="centered"
         className={cn(
-          "flex flex-col h-screen min-h-0",
+          "flex h-screen min-h-0 flex-col",
           "data-[content-layout=centered]:!mx-auto data-[content-layout=centered]:max-w-screen-2xl",
           // Adds right margin for inset sidebar in centered layout up to 113rem.
           // On wider screens with collapsed sidebar, removes margin and sets margin auto for alignment.
@@ -55,7 +55,7 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
             </div>
           </div>
         </header>
-        <div className="flex-1 overflow-y-auto min-h-0 p-4 md:p-6">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

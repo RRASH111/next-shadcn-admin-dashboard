@@ -7,16 +7,19 @@ This document outlines the setup for your SaaS application with Prisma (PostgreS
 ### 1. Install PostgreSQL
 
 **Windows:**
+
 - Download from [PostgreSQL Downloads](https://www.postgresql.org/download/windows/)
 - Install and set a password for the `postgres` user
 
 **macOS:**
+
 ```bash
 brew install postgresql
 brew services start postgresql
 ```
 
 **Linux:**
+
 ```bash
 sudo apt-get install postgresql postgresql-contrib
 sudo service postgresql start
@@ -67,6 +70,7 @@ npx prisma studio
 ### 2. Get API Keys
 
 From your Clerk dashboard:
+
 - Copy `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - Copy `CLERK_SECRET_KEY`
 
@@ -102,6 +106,7 @@ WEBHOOK_SECRET="whsec_..."
 ### 2. Get API Keys
 
 From Stripe Dashboard → Developers → API keys:
+
 - Copy `Publishable key` → `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - Copy `Secret key` → `STRIPE_SECRET_KEY`
 
@@ -186,21 +191,25 @@ npm start
 ## 🔄 Database Models
 
 ### User
+
 - Synchronized with Clerk authentication
 - Stores email, username, name, avatar
 - Can belong to multiple organizations
 
 ### Organization
+
 - Represents a team/organization
 - Has one owner (User)
 - Can have multiple members (Membership)
 - Stores Stripe subscription information
 
 ### Membership
+
 - Many-to-Many relation between User and Organization
 - Roles: member, admin, owner
 
 ### Subscription
+
 - Tracks subscription history
 - Linked to User and Organization
 - Stores Stripe subscription details
@@ -253,21 +262,25 @@ ngrok http 3000
 ## 🐛 Troubleshooting
 
 ### Database Connection Issues
+
 - Check PostgreSQL is running
 - Verify DATABASE_URL in .env
 - Ensure database exists
 
 ### Clerk Authentication Not Working
+
 - Verify API keys in .env
 - Check middleware configuration
 - Ensure ClerkProvider is in root layout
 
 ### Stripe Webhook Not Working
+
 - Verify webhook secret in .env
 - Check webhook endpoint in Stripe dashboard
 - Test locally with Stripe CLI
 
 ### Prisma Client Not Generated
+
 - Run `npx prisma generate`
 - Check schema.prisma syntax
 - Ensure DATABASE_URL is set

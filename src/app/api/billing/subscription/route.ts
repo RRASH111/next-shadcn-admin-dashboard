@@ -7,7 +7,7 @@ import Stripe from "stripe";
 export async function GET() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -15,7 +15,7 @@ export async function GET() {
     // Get user's organization
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { organization: true }
+      include: { organization: true },
     });
 
     if (!user?.organization?.stripeCustomerId) {
@@ -25,7 +25,7 @@ export async function GET() {
     // Get subscription from Stripe
     const subscriptions = await stripe.subscriptions.list({
       customer: user.organization.stripeCustomerId,
-      status: 'all',
+      status: "all",
       limit: 1,
     });
 

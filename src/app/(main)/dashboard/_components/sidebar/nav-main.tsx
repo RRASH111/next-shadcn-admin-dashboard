@@ -87,7 +87,6 @@ const NavItemExpanded = ({
   );
 };
 
-
 export function NavMain({ items }: NavMainProps) {
   const path = usePathname();
 

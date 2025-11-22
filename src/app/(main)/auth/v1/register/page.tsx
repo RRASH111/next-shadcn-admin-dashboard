@@ -13,12 +13,12 @@ export default function RegisterV1() {
             </div>
           </div>
           <div className="flex justify-center">
-            <SignUp 
+            <SignUp
               appearance={{
                 elements: {
                   rootBox: "mx-auto",
                   card: "shadow-none",
-                }
+                },
               }}
             />
           </div>

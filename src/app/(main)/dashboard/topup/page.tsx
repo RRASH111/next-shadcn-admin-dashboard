@@ -167,7 +167,7 @@ export default function TopupPage() {
                 <CardTitle className="text-lg">{formatCredits(pkg.credits)}</CardTitle>
                 <p className="text-muted-foreground text-sm">Email Verification Credits</p>
                 {pkg.savings && (
-                  <Badge className="mx-auto mt-2 w-fit bg-green-100 text-green-800 border-green-200">
+                  <Badge className="mx-auto mt-2 w-fit border-green-200 bg-green-100 text-green-800">
                     Save {pkg.savings}
                   </Badge>
                 )}
@@ -199,7 +199,7 @@ export default function TopupPage() {
                 </div>
 
                 <Button
-                  className="w-full h-9"
+                  className="h-9 w-full"
                   onClick={() => handlePurchase(pkg.id)}
                   disabled={isProcessing}
                   variant="default"

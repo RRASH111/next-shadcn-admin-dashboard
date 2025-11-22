@@ -34,29 +34,34 @@ MILLION_VERIFIER_API_KEY="your_api_key_here"
 ## How to Get These Keys
 
 ### 1. Clerk Setup
+
 1. Go to https://dashboard.clerk.com/
 2. Create a new application
 3. Go to "API Keys" section
 4. Copy the keys to your `.env.local`
 
 ### 2. Stripe Setup
+
 1. Go to https://dashboard.stripe.com/
 2. Make sure you're in "Test mode"
 3. Go to "Developers" → "API keys"
 4. Copy the keys to your `.env.local`
 
 ### 3. Database Setup
+
 1. Set up a PostgreSQL database (local or cloud like Neon)
 2. Copy the connection string to `DATABASE_URL`
 
 ## After Setting Up Environment Variables
 
 1. Restart your development server:
+
    ```bash
    npm run dev
    ```
 
 2. Run database migrations:
+
    ```bash
    npx prisma migrate dev
    ```
