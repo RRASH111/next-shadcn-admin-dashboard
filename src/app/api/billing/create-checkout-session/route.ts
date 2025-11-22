@@ -212,12 +212,26 @@ export async function POST(request: Request) {
 
       console.log("Checkout session created successfully:", session.id);
       return NextResponse.json({ url: session.url });
-    } catch (stripeError) {
+    } catch (stripeError: any) {
       console.error("Error creating Stripe checkout session:", stripeError);
-      return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
+      console.error("Stripe error details:", stripeError?.message);
+      return NextResponse.json(
+        {
+          error: "Failed to create checkout session",
+          details: stripeError?.message || "Unknown Stripe error",
+        },
+        { status: 500 }
+      );
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating checkout session:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error details:", error?.message);
+    return NextResponse.json(
+      {
+        error: "Internal server error",
+        details: error?.message || "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }
